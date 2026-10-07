@@ -6,7 +6,7 @@ A monochrome drawing project with 47 retained marks. One continuous gesture can 
 
 Optional links use a manual HTTPS field by default, or icon choices for GitHub, X, LinkedIn and Monkeytype usernames. Desktop hover and Inspect links mode reveal a mark's URL. The live counter measures path length, not filled area.
 
-Three original isometric SVG motion studies use bounded pointer-responsive springs. They stop at rest, offscreen or when the tab is hidden. Reduced motion holds the resting pose.
+Actual Hairline 0.3.0 Riffle component uses original engine and geometry. It sits below the drawing without changing submitted paths. Pointer and arrow-key interaction come from the library. The MIT notice is retained in src/vendor/HAIRLINE-LICENSE.txt.
 
 ## Run locally
 
@@ -35,8 +35,8 @@ This is a runnable frontend prototype, not a shared service. State exists only i
 
 Geometry, exact path retention, perimeter clipping, 47 shades and cooldown are tested in `core.test.mjs`. Profile path and input boundaries are tested in `profiles.test.mjs`.
 
-## Motion inspiration
+## Motion source
 
 Hairline by Lucas Marques: https://hairline.lucasmarkes.com/
-Original reference: https://x.com/lucasmarkes__/status/2105386342540579198
-The motion studies here use original geometry. No Hairline source code is bundled.
+User reference: https://x.com/lucasmarkes__/status/2107212050263163362?s=46
+Vendored official @lucasmarkes/hairline 0.3.0 source under MIT, unchanged index.js. Documented theme/stroke/intensity options adapt the presentation. Library reduced motion freezes autonomous animations; pointer response remains.
