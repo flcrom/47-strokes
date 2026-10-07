@@ -27,7 +27,9 @@ The lockfile pins dependencies. No private component package or account credenti
 
 ## Current boundary
 
-This is a runnable frontend prototype, not a shared service. State exists only in the open session; reloading resets it. There is no shared backend, server-authoritative global cooldown, production persistence or moderation service. The private testing controls can skip the local timer. A custom-domain static deployment is planned separately. Database and shared-service functionality are not included.
+Two build modes exist. `npm run dev` / `npm run build` are the session-only private prototype. `npm run build:shared` with `npm run dev:worker` runs the shared Cloudflare Worker and persistent SQLite Durable Object locally. The shared build has a server-authoritative five-minute global cooldown and no public reset or skip control. Production writes remain disabled pending bot protection and launch review. No public deployment is complete yet.
+
+The shared API keeps idempotent submission receipts so retrying after a lost response cannot add the same mark again. GET `/canvas.svg` renders the current 47 paths for a future GitHub README image. No profile README has been changed by this preparation.
 
 ## Tests
 

@@ -1,5 +1,26 @@
 {
- "name":"47-strokes","version":"0.1.0","private":true,"type":"module",
- "scripts":{"dev":"vite","build":"vite build","preview":"vite preview","test":"node --test core.test.mjs profiles.test.mjs"},
- "dependencies":{"react":"19.3.0","react-dom":"19.3.0"},"devDependencies":{"vite":"8.3.3"}
+  "name": "47-strokes",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "node --test core.test.mjs profiles.test.mjs worker.test.mjs",
+    "build:shared": "VITE_SHARED_CANVAS=true vite build",
+    "dev:worker": "wrangler dev --local"
+  },
+  "dependencies": {
+    "jose": "^6.2.12",
+    "react": "19.3.0",
+    "react-dom": "19.3.0"
+  },
+  "devDependencies": {
+    "vite": "8.3.3",
+    "wrangler": "^4.148.0"
+  },
+  "overrides": {
+    "sharp": "0.35.5"
+  }
 }

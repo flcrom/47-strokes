@@ -1,0 +1,19 @@
+{
+  "name": "47-strokes",
+  "main": "worker/index.mjs",
+  "compatibility_date": "2026-10-07",
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": ["/api/*", "/canvas.svg", "/admin", "/admin/*"],
+  },
+  "durable_objects": {
+    "bindings": [{ "name": "CANVAS", "class_name": "Canvas" }],
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["Canvas"] }],
+  "vars": {
+    "PUBLIC_WRITES": "disabled",
+    "ADMIN_EMAIL": "vardhman.47th@gmail.com",
+  },
+}
