@@ -663,7 +663,7 @@ input:focus {
 
 .canvasframe { position: relative; }
 .strokehover { position: absolute; z-index: 2; box-sizing: border-box; width: 220px; max-width: calc(100% - 16px); padding: 9px 10px; border: 1px solid #bbb; background: #fff; color: #111; font: 11px monospace; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; pointer-events: none; }
-/* Transient verification and hover states never change surrounding layout. */
+/* Hover remains an overlay. This check alone collapses after verification. */
 .minimalcanvas .botcheck { height: 85px; min-height: 85px; position: relative; }
 .minimalcanvas .botcheck > div[aria-label="Bot check"] { height: 65px; }
 .minimalcanvas .botcheck > small { position: absolute; top: 68px; left: 0; }
@@ -673,4 +673,6 @@ input:focus {
 
 .minimalcanvas .canvasavailability { height: 20px; font-size: 12px; margin: 0 0 8px; overflow-y: auto; }
 
-.minimalcanvas .verificationslot { height: 85px; }
+.minimalcanvas .verificationslot { height: auto; }
+.minimalcanvas .verificationslot .botcheck { margin-top: 12px; }
+.minimalcanvas .botcheck.collapseverified[data-verified="true"] { display: none; }

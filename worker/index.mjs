@@ -1,3 +1,4 @@
+import { archiveAuth, archivePage } from "./archive.mjs";
 import { visitor, admin } from "./guard.mjs";
 export { Canvas } from "./canvas.mjs";
 const MAX_BODY = 70000;
@@ -31,6 +32,17 @@ export default {
       "X-Content-Type-Options": "nosniff",
       "Referrer-Policy": "strict-origin-when-cross-origin",
     };
+    if (url.pathname === "/archive" && request.method === "GET")
+      return new Response(archivePage, {headers:{"Content-Type":"text/html; charset=utf-8","Cache-Control":"no-store","X-Robots-Tag":"noindex, nofollow","Content-Security-Policy":"default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'",...headers}});
+    if (url.pathname.startsWith("/archive/")) {
+      const gate=await env.CANVAS.get(env.CANVAS.idFromName("shared-canvas-v1")).fetch(new Request(url.origin+"/internal/archive-rate",{method:"POST",headers:{"X-Archive-Verified":"yes","Content-Type":"application/json"},body:"{}"}));
+      if(gate.status!==200)return Response.json({error:"Too many archive attempts. Try again later."},{status:429,headers:{...headers,"Cache-Control":"no-store"}});
+      const body=await archiveAuth(request,env.ARCHIVE_SECRET);
+      if(!body) return Response.json({error:"Archive authentication required."},{status:403,headers:{...headers,"Cache-Control":"no-store"}});
+      if(!["/archive/export","/archive/prune"].includes(url.pathname))return new Response("Not found",{status:404});
+      const safe=new Request(url.origin+"/internal"+url.pathname,{method:"POST",headers:{"X-Archive-Verified":"yes","Content-Type":"application/json"},body:JSON.stringify(body)});
+      return env.CANVAS.get(env.CANVAS.idFromName("shared-canvas-v1")).fetch(safe);
+    }
     // Reports are unavailable while the owner review page is not configured.
     if (url.pathname === "/api/report")
       return Response.json(

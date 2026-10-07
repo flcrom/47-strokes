@@ -7,8 +7,8 @@ declare global {
     };
   }
 }
-export function BotCheck({ siteKey, action, onToken, nonce }: {
-  siteKey: string; action: string; onToken: (t: string) => void; nonce: number;
+export function BotCheck({ siteKey, action, onToken, nonce, collapseOnVerified = false }: {
+  siteKey: string; action: string; onToken: (t: string) => void; nonce: number; collapseOnVerified?: boolean;
 }) {
   const root = useRef<HTMLDivElement>(null);
   const [attempt, setAttempt] = useState(0);
@@ -58,8 +58,8 @@ export function BotCheck({ siteKey, action, onToken, nonce }: {
       if (id) window.turnstile?.remove(id);
     };
   }, [siteKey, action, nonce, attempt]);
-  return <div className="botcheck" data-verified={status === "ready"} style={{ visibility: status === "ready" ? "hidden" : "visible" }} aria-hidden={status === "ready"}>
-    <div ref={root} aria-label="Bot check" />
+  return <div className={`botcheck${collapseOnVerified ? " collapseverified" : ""}`} data-verified={status === "ready"} style={{ visibility: status === "ready" ? "hidden" : "visible" }} aria-hidden={status === "ready"}>
+    <div ref={root} aria-label="Bot check" style={{ visibility: status === "failed" ? "hidden" : "visible" }} />
     {status === "loading" && <small role="status">Checking…</small>}
     {status === "failed" && <div className="tools" role="status"><small>Bot check unavailable.</small><button type="button" className="file-button" onClick={() => setAttempt((n) => n + 1)}>Retry bot check</button></div>}
   </div>;

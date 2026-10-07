@@ -1,3 +1,6 @@
+import { exportBatch, pruneBatch, archiveRate } from "./archive.mjs";
+import { validateMotion } from "../src/motion.mjs";
+import { initializeHistory, archiveAccepted } from "./history.mjs";
 import {
   seed,
   validate,
@@ -6,7 +9,7 @@ import {
   WIDTH,
   HEIGHT,
 } from "../src/core.mjs";
-import { introStrokes, installIntroOnce } from "./intro.mjs";
+import { introStrokes } from "./intro.mjs";
 export function initialState() {
   return { version: 0, strokes: structuredClone(introStrokes), nextAllowed: 0 };
 }
@@ -44,10 +47,22 @@ export class Canvas {
     this.env = env;
   }
   async read() {
-    return (await installIntroOnce(this.ctx.storage)) || initialState();
+    const state = (await this.ctx.storage.get("canvas")) || initialState();
+    await initializeHistory(this.ctx.storage, initialState());
+    return state;
   }
   async fetch(request) {
     const path = new URL(request.url).pathname;
+    if(path==="/internal/archive-rate") { if(request.method!=="POST"||request.headers.get("X-Archive-Verified")!=="yes")return new Response("Forbidden",{status:403});return new Response(null,{status:await archiveRate(this.ctx.storage)?200:429}); }
+    if (path.startsWith("/internal/archive/")) {
+      if(request.method!=="POST" || request.headers.get("X-Archive-Verified")!=="yes")return new Response("Forbidden",{status:403});
+      try { const result=path==="/internal/archive/export" ? await exportBatch(this.ctx.storage) : path==="/internal/archive/prune" ? await pruneBatch(this.ctx.storage,await request.json()) : null;
+        if(!result)return new Response("Not found",{status:404});
+        return Response.json(result,{headers:{"Cache-Control":"no-store"}});
+      } catch { return Response.json({error:"Archive batch could not be processed. Nothing cleared."},{status:400}); }
+    }
+    // Capture baseline before any route can accept and evict its oldest stroke.
+    await initializeHistory(this.ctx.storage, initialState());
     let now = Date.now();
     if (
       path === "/internal/admin" &&
@@ -145,7 +160,7 @@ export class Canvas {
       if (
         !body ||
         Object.keys(body).some(
-          (k) => !["points", "url", "requestId", "token"].includes(k),
+          (k) => !["points", "url", "requestId", "token", "motion"].includes(k),
         ) ||
         typeof body.url !== "string" ||
         !/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
@@ -154,11 +169,12 @@ export class Canvas {
       )
         throw Error("Send one path and an optional HTTPS link.");
       validate(body.points, body.url);
+      const motion = validateMotion(body.motion);
       const digest = Array.from(
         new Uint8Array(
           await crypto.subtle.digest(
             "SHA-256",
-            new TextEncoder().encode(JSON.stringify([body.points, body.url])),
+            new TextEncoder().encode(JSON.stringify(motion ? [body.points, body.url, motion] : [body.points, body.url])),
           ),
         ),
       )
@@ -219,6 +235,7 @@ export class Canvas {
             ),
             [visitorID]: now + 3600000,
           };
+        await archiveAccepted(tx, next.strokes.at(-1), now, motion);
         await tx.put("canvas", next);
         await tx.put("receipt:" + body.requestId, digest);
         return next;

@@ -1,3 +1,4 @@
+import { createMotion, recordMotion, finishMotion } from "./motion.mjs";
 import React, { useEffect, useRef, useState } from "react";
 import { FileCard, FileButton } from "./ui";
 import {
@@ -43,6 +44,8 @@ function CanvasApp() {
     [selected, setSelected] = useState<Stroke | null>(null),
     [hoverAt, setHoverAt] = useState({ x: 0, y: 0 }),
     [used, setUsed] = useState(0);
+  const motion = useRef<any>(null);
+  const [draftMotion, setDraftMotion] = useState<any>(undefined);
   const pointer = useRef<number | null>(null);
   const gesture = useRef<{ x: number; y: number; moved: boolean; canDraw: boolean; hit: Stroke | null; mouse: boolean } | null>(null);
   const canvas = useRef<HTMLCanvasElement>(null),
@@ -54,6 +57,7 @@ function CanvasApp() {
     requestId: string;
     points: number[][];
     url: string;
+    motion?: any;
   } | null>(null);
   const offset = useRef(0),
     version = useRef(-1);
@@ -107,6 +111,7 @@ function CanvasApp() {
         validate(saved.points, saved.url);
         pending.current = saved;
         setDraft(saved.points);
+        setDraftMotion(saved.motion);
         setUrl(saved.url);
         setKind("manual");
       }
@@ -189,6 +194,7 @@ function CanvasApp() {
     active.current = true;
     pointer.current = e.pointerId;
     points.current = canDraw ? [point(e)] : [];
+    motion.current = canDraw ? createMotion(...point(e), e.timeStamp) : null;
     if (canDraw) { setError(""); setUsed(0); }
     e.currentTarget.setPointerCapture(e.pointerId);
   }
@@ -203,6 +209,13 @@ function CanvasApp() {
     }
     if (e.pointerId !== pointer.current || !gesture.current) return;
     const g = gesture.current;
+    if (g.canDraw && motion.current) {
+      const samples = e.nativeEvent.getCoalescedEvents?.() || [];
+      for (const ev of samples.length ? samples : [e.nativeEvent]) {
+        const r = e.currentTarget.getBoundingClientRect();
+        recordMotion(motion.current, Math.round(Math.max(0,Math.min(WIDTH,(ev.clientX-r.left)*WIDTH/r.width))), Math.round(Math.max(0,Math.min(HEIGHT,(ev.clientY-r.top)*HEIGHT/r.height))), ev.timeStamp);
+      }
+    }
     if (Math.hypot(e.clientX - g.x, e.clientY - g.y) >= 5) g.moved = true;
     if (!g.canDraw || !g.moved) return;
     const p = point(e), last = points.current.at(-1)!;
@@ -228,7 +241,9 @@ function CanvasApp() {
       points.current = extendPath(points.current, point(e));
       setUsed(pathLength(points.current));
       setDraft(points.current);
+      if (motion.current) setDraftMotion(finishMotion(motion.current, ...point(e), e.timeStamp));
     }
+    motion.current = null;
     if (e.currentTarget.hasPointerCapture(e.pointerId)) e.currentTarget.releasePointerCapture(e.pointerId);
     draw();
   }
@@ -244,6 +259,7 @@ function CanvasApp() {
             requestId: crypto.randomUUID(),
             points: structuredClone(draft),
             url: link,
+            motion: draftMotion,
           };
         sessionStorage.setItem(
           "47-strokes-pending",
@@ -251,7 +267,7 @@ function CanvasApp() {
         );
         const saved = pending.current;
         applyShared(
-          await addShared(saved.points, saved.url, saved.requestId, botToken),
+          await addShared(saved.points, saved.url, saved.requestId, botToken, saved.motion),
         );
         pending.current = null;
         sessionStorage.removeItem("47-strokes-pending");
@@ -304,21 +320,21 @@ function CanvasApp() {
         <canvas aria-label="Drag to draw one continuous stroke. On desktop, hover to see a link and click to open it in a new tab." ref={canvas} width={WIDTH} height={HEIGHT}
           onPointerDown={down} onPointerMove={move} onPointerUp={finish}
           onPointerLeave={() => { if (!active.current) setSelected(null); }}
-          onPointerCancel={(e) => { if (e.pointerId !== pointer.current) return; active.current = false; pointer.current = null; gesture.current = null; points.current = []; draw(); }} />
+          onPointerCancel={(e) => { if (e.pointerId !== pointer.current) return; active.current = false; pointer.current = null; gesture.current = null; motion.current = null; points.current = []; draw(); }} />
         {selected && <div className="strokehover" role="tooltip" style={{ left: `clamp(8px, ${hoverAt.x}%, calc(100% - 228px))`, top: `clamp(8px, calc(${hoverAt.y}% + 14px), calc(100% - 44px))` }} title={selected.url || "No link"}>{selected.url || "No link"}</div>}
         </div>
         <div className="canvascontrols">
           <div className="tools">
-            <FileButton disabled={!ready || !draft.length || !!pending.current} onClick={() => { setDraft([]); setError(""); }}>Undo</FileButton>
+            <FileButton disabled={!ready || !draft.length || !!pending.current} onClick={() => { setDraft([]); setDraftMotion(undefined); setError(""); }}>Undo</FileButton>
           </div>
           <span className="limit" aria-label="Stroke length remaining">{Math.max(0, MAX_LENGTH - used).toFixed(0)} / {MAX_LENGTH}</span>
         </div>
         <ProfilePicker kind={kind} setKind={setKind} value={url} setValue={setUrl} disabled={!ready || !!pending.current} />
-        {sharedMode && <div className="verificationslot">{(writesEnabled || !!pending.current) && siteKey && <BotCheck siteKey={siteKey} action="stroke" onToken={setBotToken} nonce={botNonce} />}</div>}
         <div className="tools submittools">
           {sharedMode && pending.current ? <FileButton disabled={sending} onClick={submit}>{sending ? "Confirming…" : "Retry saved submission"}</FileButton> :
           <FileButton disabled={!ready || waiting || draft.length < 2 || (sharedMode && !botToken)} onClick={submit}>{waiting ? "Canvas resting" : "Add my stroke"}</FileButton>}
         </div>
+        {sharedMode && <div className="verificationslot">{(writesEnabled || !!pending.current) && siteKey && <BotCheck siteKey={siteKey} action="stroke" onToken={setBotToken} nonce={botNonce} collapseOnVerified />}</div>}
         <p className="error" role="status">{error}</p>
         <StrokeList strokes={strokes} />
         {!sharedMode && <details><summary>Private prototype controls</summary><FileButton onClick={reset}>Reset private demo</FileButton></details>}
