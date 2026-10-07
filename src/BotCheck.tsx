@@ -29,7 +29,7 @@ export function BotCheck({
           sitekey: siteKey,
           action,
           theme: "light",
-          size: "compact",
+          size: "flexible",
           callback: onToken,
           "expired-callback": () => onToken(""),
           "error-callback": () => onToken(""),
@@ -53,5 +53,5 @@ export function BotCheck({
       if (id) window.turnstile?.remove(id);
     };
   }, [siteKey, action, nonce]);
-  return <div ref={root} aria-label="Bot check" />;
+  return <div className="botcheck" ref={root} aria-label="Bot check" />;
 }

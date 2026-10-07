@@ -630,3 +630,14 @@ input:focus {
     flex: none;
   }
 }
+
+/* Minimal drawing controls. */
+.minimalcanvas .pageheader { margin-bottom: 24px; }
+.canvascontrols { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 12px 0 24px; }
+.canvascontrols .tools { margin: 0; }
+.canvascontrols .limit { margin-left: auto; text-align: right; font: 11px monospace; color: #555; white-space: nowrap; }
+.minimalcanvas .picker { margin-top: 0; padding-top: 0; border-top: 0; }
+.minimalcanvas .profilechoices { display: flex; flex-wrap: nowrap; gap: 12px; margin: 12px 0 20px; }
+.minimalcanvas .botcheck { width: 100%; min-height: 65px; }
+.minimalcanvas .submittools { margin-top: 20px; }
+@media (max-width: 360px) { .minimalcanvas { margin-left: -6px; margin-right: -6px; } .canvascontrols { align-items: flex-start; } .canvascontrols .tools { gap: 6px; } .canvascontrols .file-button { padding: 10px; } }

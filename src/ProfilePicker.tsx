@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { profiles } from "./profiles.mjs";
 import { marks } from "./profile-marks";
 function Mark({ name }: { name: string }) {
@@ -24,12 +24,12 @@ export function ProfilePicker({
   disabled: boolean;
 }) {
   const [slots, setSlots] = useState(() =>
-    profiles.filter((p) => p.id !== kind).map((p) => p.id),
+    profiles.filter((p) => p.id !== kind && p.id !== "monkeytype").map((p) => p.id),
   );
   useEffect(() => {
     setSlots((old) =>
       old.includes(kind)
-        ? profiles.filter((p) => p.id !== kind).map((p) => p.id)
+        ? profiles.filter((p) => p.id !== kind && p.id !== "monkeytype").map((p) => p.id)
         : old,
     );
   }, [kind]);
@@ -38,51 +38,17 @@ export function ProfilePicker({
     setKind(id);
     setValue("");
   }
+  const container = useRef<HTMLElement>(null);
+  const [visibleCount, setVisibleCount] = useState(6);
+  useEffect(() => {
+    if (!container.current) return;
+    const observer = new ResizeObserver(([entry]) => setVisibleCount(Math.max(1, Math.floor((entry.contentRect.width + 12) / 74))));
+    observer.observe(container.current);
+    return () => observer.disconnect();
+  }, []);
   const p = profiles.find((p) => p.id === kind)!;
   return (
-    <section className="picker">
-      <div className="sectiontop">
-        <label htmlFor="profile-input">Leave a link, if you like.</label>
-        <span>Optional</span>
-      </div>
-      <div className="profilechoices" role="group" aria-label="Link type">
-        {slots
-          .map((id) => profiles.find((p) => p.id === id)!)
-          .filter((p) => p.id !== "monkeytype")
-          .map((p, index) => (
-            <div className="profilecell" key={index}>
-              <button
-                type="button"
-                disabled={disabled}
-                aria-label={p.name}
-                aria-pressed={p.id === kind}
-                onClick={() => {
-                  choose(p.id);
-                }}
-              >
-                <Mark name={p.name} />
-              </button>
-              <span>{p.name}</span>
-            </div>
-          ))}
-      </div>
-      {slots.includes("monkeytype") && (
-        <button
-          className="legacyprofile"
-          type="button"
-          disabled={disabled}
-          aria-pressed={kind === "monkeytype"}
-          onClick={() => {
-            choose("monkeytype");
-          }}
-        >
-          <svg viewBox="0 0 26 24" aria-hidden="true">
-            <rect x="2" y="5" width="20" height="14" rx="2" />
-            <path d="M5 9h1m3 0h1m3 0h1m3 0h1M5 12h1m3 0h1m3 0h1m3 0h1M6 16h12" />
-          </svg>
-          <span>Monkeytype</span>
-        </button>
-      )}
+    <section className="picker" ref={container}>
       <div className="profilefield">
         <div className="profileinputmark">
           {kind === "monkeytype" ? (
@@ -124,11 +90,28 @@ export function ProfilePicker({
           />
         </div>
       </div>
-      <small aria-live="polite">
-        {p.name} selected.{" "}
-        {p.help ||
-          "Only the link you enter is attached. No account connection."}
-      </small>
+      <div className="profilechoices" role="group" aria-label="Link type">
+        {slots
+          .map((id) => profiles.find((p) => p.id === id)!)
+          .filter((p) => p.id !== "monkeytype")
+          .slice(0, visibleCount)
+          .map((p, index) => (
+            <div className="profilecell" key={index}>
+              <button
+                type="button"
+                disabled={disabled}
+                aria-label={p.name}
+                aria-pressed={p.id === kind}
+                onClick={() => {
+                  choose(p.id);
+                }}
+              >
+                <Mark name={p.name} />
+              </button>
+            </div>
+          ))}
+      </div>
+
     </section>
   );
 }
