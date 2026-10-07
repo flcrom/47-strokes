@@ -2,6 +2,9 @@
   "name": "47-strokes",
   "main": "worker/index.mjs",
   "compatibility_date": "2026-10-07",
+  "workers_dev": true,
+  "preview_urls": true,
+  "keep_vars": true,
   "assets": {
     "directory": "./dist",
     "binding": "ASSETS",
@@ -13,7 +16,7 @@
   },
   "migrations": [{ "tag": "v1", "new_sqlite_classes": ["Canvas"] }],
   "vars": {
-    "PUBLIC_WRITES": "disabled",
+    "PUBLIC_WRITES": "enabled",
     "ADMIN_EMAIL": "vardhman.47th@gmail.com",
   },
 }
