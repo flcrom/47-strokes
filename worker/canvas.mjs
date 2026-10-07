@@ -6,8 +6,9 @@ import {
   WIDTH,
   HEIGHT,
 } from "../src/core.mjs";
+import { introStrokes, installIntroOnce } from "./intro.mjs";
 export function initialState() {
-  return { version: 0, strokes: seed(), nextAllowed: 0 };
+  return { version: 0, strokes: structuredClone(introStrokes), nextAllowed: 0 };
 }
 export function advance(state, points, url, now, id) {
   if (now < state.nextAllowed) {
@@ -43,7 +44,7 @@ export class Canvas {
     this.env = env;
   }
   async read() {
-    return (await this.ctx.storage.get("canvas")) || initialState();
+    return (await installIntroOnce(this.ctx.storage)) || initialState();
   }
   async fetch(request) {
     const path = new URL(request.url).pathname;
