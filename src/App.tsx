@@ -42,6 +42,7 @@ function CanvasApp() {
   const [now, setNow] = useState(Date.now()),
     [error, setError] = useState(""),
     [selected, setSelected] = useState<Stroke | null>(null),
+    [touchReveal, setTouchReveal] = useState(false),
     [hoverAt, setHoverAt] = useState({ x: 0, y: 0 }),
     [used, setUsed] = useState(0);
   const motion = useRef<any>(null);
@@ -188,9 +189,9 @@ function CanvasApp() {
     if (!loaded || active.current || !e.isPrimary || (e.button !== 0 && e.pointerType === "mouse")) return;
     const canDraw = ready && !waiting && !pending.current && !draft.length;
     const mouse = e.pointerType === "mouse";
-    if (!canDraw && !mouse) return;
-    gesture.current = { x: e.clientX, y: e.clientY, moved: false, canDraw, hit: mouse ? hit(e) : null, mouse };
-    setSelected(null);
+
+    gesture.current = { x: e.clientX, y: e.clientY, moved: false, canDraw, hit: hit(e), mouse };
+    setSelected(null); setTouchReveal(false);
     active.current = true;
     pointer.current = e.pointerId;
     points.current = canDraw ? [point(e)] : [];
@@ -202,7 +203,7 @@ function CanvasApp() {
     if (!active.current) {
       if (e.pointerType === "mouse" && loaded) {
         const r = e.currentTarget.getBoundingClientRect();
-        setSelected(hit(e));
+        setTouchReveal(false); setSelected(hit(e));
         setHoverAt({ x: 100 * (e.clientX - r.left) / r.width, y: 100 * (e.clientY - r.top) / r.height });
       }
       return;
@@ -236,6 +237,11 @@ function CanvasApp() {
     if (clickLink) {
       points.current = [];
       window.open(g.hit!.url, "_blank", "noopener,noreferrer");
+    } else if (!g.mouse && !g.moved && g.hit && hit(e)?.id === g.hit.id) {
+      setSelected(g.hit); setTouchReveal(true);
+      const r = e.currentTarget.getBoundingClientRect();
+      setHoverAt({ x: 100 * (e.clientX - r.left) / r.width, y: 100 * (e.clientY - r.top) / r.height });
+      points.current = [];
     } else if (g.canDraw && g.moved) {
       // Touch and pen always draw; a desktop drag never opens a visitor link.
       points.current = extendPath(points.current, point(e));
@@ -319,9 +325,9 @@ function CanvasApp() {
         <div className="canvasframe">
         <canvas aria-label="Drag to draw one continuous stroke. On desktop, hover to see a link and click to open it in a new tab." ref={canvas} width={WIDTH} height={HEIGHT}
           onPointerDown={down} onPointerMove={move} onPointerUp={finish}
-          onPointerLeave={() => { if (!active.current) setSelected(null); }}
+          onPointerLeave={() => { if (!active.current && !touchReveal) setSelected(null); }}
           onPointerCancel={(e) => { if (e.pointerId !== pointer.current) return; active.current = false; pointer.current = null; gesture.current = null; motion.current = null; points.current = []; draw(); }} />
-        {selected && <div className="strokehover" role="tooltip" style={{ left: `clamp(8px, ${hoverAt.x}%, calc(100% - 228px))`, top: `clamp(8px, calc(${hoverAt.y}% + 14px), calc(100% - 44px))` }} title={selected.url || "No link"}>{selected.url || "No link"}</div>}
+        {selected && <div className={`strokehover${touchReveal ? " touchreveal" : ""}`} role={touchReveal ? "group" : "tooltip"} style={{ left: `clamp(8px, ${hoverAt.x}%, calc(100% - 228px))`, top: `clamp(8px, calc(${hoverAt.y}% + 14px), calc(100% - 44px))` }} title={selected.url || "No link"}>{touchReveal && selected.url ? <a href={selected.url} target="_blank" rel="noopener noreferrer nofollow ugc" aria-label={`Open ${selected.url}`}>{selected.url}</a> : selected.url || "No link"}</div>}
         </div>
         <div className="canvascontrols">
           <div className="tools">
@@ -337,6 +343,10 @@ function CanvasApp() {
         {sharedMode && <div className="verificationslot">{(writesEnabled || !!pending.current) && siteKey && <BotCheck siteKey={siteKey} action="stroke" onToken={setBotToken} nonce={botNonce} collapseOnVerified />}</div>}
         <p className="error" role="status">{error}</p>
         <StrokeList strokes={strokes} />
+        <details className="whyexists">
+          <summary>Why This Exists?</summary>
+          <p>This canvas captures a rotating gallery of exactly 47 strokes. When a new stroke is added, the least recently added one disappears, keeping the collection in constant flux. Why forty-seven? Because I love the number. Why does this exist? So people visiting my site have something to interact with and a place to leave their trace.</p>
+        </details>
         {!sharedMode && <details><summary>Private prototype controls</summary><FileButton onClick={reset}>Reset private demo</FileButton></details>}
       </div>
     </FileCard>

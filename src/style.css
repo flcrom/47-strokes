@@ -676,3 +676,14 @@ input:focus {
 .minimalcanvas .verificationslot { height: auto; }
 .minimalcanvas .verificationslot .botcheck { margin-top: 12px; }
 .minimalcanvas .botcheck.collapseverified[data-verified="true"] { display: none; }
+
+/* Quiet context after the canvas and visitor gallery. */
+.minimalcanvas .whyexists { margin-top: 40px; padding-top: 24px; border-top: 1px solid #ddd; }
+.minimalcanvas .whyexists summary { cursor: pointer; font-size: 16px; font-weight: 400; }
+.minimalcanvas .whyexists[open] summary { margin-bottom: 16px; }
+.minimalcanvas .whyexists p { max-width: 66ch; margin: 0; font-size: 14px; line-height: 1.7; color: #555; }
+
+.strokehover.touchreveal { pointer-events: none; min-height: 44px; display: flex; align-items: center; }
+.strokehover.touchreveal a { pointer-events: auto; min-height: 44px; display: flex; align-items: center; color: inherit; display: block; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%; }
+
+.strokehover.touchreveal:has(a) { padding-top: 0; padding-bottom: 0; }
