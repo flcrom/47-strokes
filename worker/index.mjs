@@ -31,6 +31,12 @@ export default {
       "X-Content-Type-Options": "nosniff",
       "Referrer-Policy": "strict-origin-when-cross-origin",
     };
+    // Reports are unavailable while the owner review page is not configured.
+    if (url.pathname === "/api/report")
+      return Response.json(
+        { error: "Link reporting is not available." },
+        { status: 404, headers },
+      );
     if (url.pathname === "/admin" || url.pathname.startsWith("/admin/")) {
       if (!(await admin(request, env)))
         return new Response("Private owner sign-in required", {

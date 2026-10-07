@@ -62,9 +62,7 @@ function CanvasApp() {
       sessionStorage.getItem("47-turnstile-key") || "",
     ),
     [botToken, setBotToken] = useState(""),
-    [botNonce, setBotNonce] = useState(0),
-    [reporting, setReporting] = useState<string | null>(null),
-    [reportToken, setReportToken] = useState("");
+    [botNonce, setBotNonce] = useState(0);
   const [writesEnabled, setWritesEnabled] = useState(!sharedMode);
   const ready = loaded && !sending && writesEnabled,
     strokes = [...a, ...b],
@@ -385,59 +383,7 @@ function CanvasApp() {
                     Open link ↗
                   </a>
                   <small>Visitor link. Not checked or endorsed.</small>
-                  {sharedMode &&
-                    (writesEnabled || !!pending.current) &&
-                    siteKey && (
-                      <FileButton
-                        onClick={() => {
-                          setReporting(selected.id);
-                          setReportToken("");
-                        }}
-                      >
-                        Report link
-                      </FileButton>
-                    )}
-                  {reporting === selected.id && (
-                    <>
-                      <BotCheck
-                        siteKey={siteKey}
-                        action="report"
-                        onToken={setReportToken}
-                        nonce={botNonce}
-                      />
-                      <FileButton
-                        disabled={!reportToken || sending}
-                        onClick={async () => {
-                          setSending(true);
-                          try {
-                            const r = await fetch("/api/report", {
-                              method: "POST",
-                              headers: { "Content-Type": "application/json" },
-                              body: JSON.stringify({
-                                id: selected.id,
-                                token: reportToken,
-                              }),
-                            });
-                            if (!r.ok)
-                              throw Error(
-                                (await r.json()).error ||
-                                  "Report did not go through.",
-                              );
-                            setError("Link reported for owner review.");
-                            setReporting(null);
-                          } catch (e) {
-                            setError((e as Error).message);
-                          } finally {
-                            setSending(false);
-                            setReportToken("");
-                            setBotNonce((n) => n + 1);
-                          }
-                        }}
-                      >
-                        Send report
-                      </FileButton>
-                    </>
-                  )}
+
                 </>
               ) : (
                 <span>This line has no link.</span>

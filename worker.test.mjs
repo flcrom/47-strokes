@@ -307,3 +307,15 @@ test("admin signedtokens requireexpiration and exactaud/owner", async () => {
     globalThis.fetch = old;
   }
 });
+
+
+test("no-review launch disables public reporting without touching canvas", async () => {
+  const { default: worker } = await import("./worker/index.mjs");
+  for (const method of ["GET", "POST"]) {
+    const response = await worker.fetch(new Request("https://example.com/api/report", { method }), {});
+    assert.equal(response.status, 404);
+    assert.equal((await response.json()).error, "Link reporting is not available.");
+  }
+  const response = await worker.fetch(new Request("https://example.com/admin/api/links"), {});
+  assert.equal(response.status, 403);
+});
