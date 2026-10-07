@@ -41,9 +41,10 @@ function CanvasApp() {
   const [now, setNow] = useState(Date.now()),
     [error, setError] = useState(""),
     [selected, setSelected] = useState<Stroke | null>(null),
-    [inspect, setInspect] = useState(false),
+    [hoverAt, setHoverAt] = useState({ x: 0, y: 0 }),
     [used, setUsed] = useState(0);
   const pointer = useRef<number | null>(null);
+  const gesture = useRef<{ x: number; y: number; moved: boolean; canDraw: boolean; hit: Stroke | null; mouse: boolean } | null>(null);
   const canvas = useRef<HTMLCanvasElement>(null),
     active = useRef(false),
     points = useRef<number[][]>([]);
@@ -157,7 +158,7 @@ function CanvasApp() {
       ctx.stroke();
     }
   }
-  useEffect(draw, [a, b, draft, selected]);
+  useEffect(draw, [a, b, draft]);
   useEffect(() => setUsed(pathLength(draft)), [draft]);
 
   function point(e: React.PointerEvent<HTMLCanvasElement>) {
@@ -174,41 +175,37 @@ function CanvasApp() {
       ),
     ];
   }
+  function hit(e: React.PointerEvent<HTMLCanvasElement>) {
+    const r = e.currentTarget.getBoundingClientRect();
+    return nearestStroke(strokes, point(e), 7 * WIDTH / r.width);
+  }
   function down(e: React.PointerEvent<HTMLCanvasElement>) {
-    if (
-      !loaded ||
-      sending ||
-      (waiting && !inspect) ||
-      active.current ||
-      !e.isPrimary ||
-      pending.current
-    )
-      return;
-    const p = point(e);
-    if (inspect) {
-      setSelected(nearestStroke(strokes, p));
-      return;
-    }
-    if (!writesEnabled) return;
-    if (draft.length) return;
-    if (e.button !== 0 && e.pointerType === "mouse") return;
-    setError("");
+    if (!loaded || active.current || !e.isPrimary || (e.button !== 0 && e.pointerType === "mouse")) return;
+    const canDraw = ready && !waiting && !pending.current && !draft.length;
+    const mouse = e.pointerType === "mouse";
+    if (!canDraw && !mouse) return;
+    gesture.current = { x: e.clientX, y: e.clientY, moved: false, canDraw, hit: mouse ? hit(e) : null, mouse };
+    setSelected(null);
     active.current = true;
     pointer.current = e.pointerId;
-    points.current = [p];
-    setUsed(0);
+    points.current = canDraw ? [point(e)] : [];
+    if (canDraw) { setError(""); setUsed(0); }
     e.currentTarget.setPointerCapture(e.pointerId);
-    draw();
   }
   function move(e: React.PointerEvent<HTMLCanvasElement>) {
     if (!active.current) {
-      if (e.pointerType !== "touch" && !waiting)
-        setSelected(nearestStroke(strokes, point(e)));
+      if (e.pointerType === "mouse" && loaded) {
+        const r = e.currentTarget.getBoundingClientRect();
+        setSelected(hit(e));
+        setHoverAt({ x: 100 * (e.clientX - r.left) / r.width, y: 100 * (e.clientY - r.top) / r.height });
+      }
       return;
     }
-    if (e.pointerId !== pointer.current) return;
-    const p = point(e),
-      last = points.current.at(-1)!;
+    if (e.pointerId !== pointer.current || !gesture.current) return;
+    const g = gesture.current;
+    if (Math.hypot(e.clientX - g.x, e.clientY - g.y) >= 5) g.moved = true;
+    if (!g.canDraw || !g.moved) return;
+    const p = point(e), last = points.current.at(-1)!;
     if (Math.hypot(p[0] - last[0], p[1] - last[1]) >= 3) {
       points.current = extendPath(points.current, p);
       setUsed(pathLength(points.current));
@@ -216,13 +213,23 @@ function CanvasApp() {
     draw();
   }
   function finish(e: React.PointerEvent<HTMLCanvasElement>) {
-    if (!active.current || e.pointerId !== pointer.current) return;
-    const p = point(e);
-    points.current = extendPath(points.current, p);
-    setUsed(pathLength(points.current));
+    if (!active.current || e.pointerId !== pointer.current || !gesture.current) return;
+    const g = gesture.current;
+    if (Math.hypot(e.clientX - g.x, e.clientY - g.y) >= 5) g.moved = true;
+    const clickLink = g.mouse && !g.moved && g.hit?.url && hit(e)?.id === g.hit.id;
     active.current = false;
     pointer.current = null;
-    setDraft(points.current);
+    gesture.current = null;
+    if (clickLink) {
+      points.current = [];
+      window.open(g.hit!.url, "_blank", "noopener,noreferrer");
+    } else if (g.canDraw && g.moved) {
+      // Touch and pen always draw; a desktop drag never opens a visitor link.
+      points.current = extendPath(points.current, point(e));
+      setUsed(pathLength(points.current));
+      setDraft(points.current);
+    }
+    if (e.currentTarget.hasPointerCapture(e.pointerId)) e.currentTarget.releasePointerCapture(e.pointerId);
     draw();
   }
   async function submit() {
@@ -287,30 +294,32 @@ function CanvasApp() {
     setError("");
     setNow(Date.now());
   };
-  if (window.location.pathname === "/strokes") return <FileCard><div className="project minimalcanvas allstrokes"><StrokeList strokes={strokes} all />{error && <p role="status">{error}</p>}</div></FileCard>;
+  if (window.location.pathname === "/strokes") return <FileCard><div className="project minimalcanvas allstrokes"><StrokeList strokes={strokes} all /><p className="error" role="status">{error}</p></div></FileCard>;
   return (
     <FileCard>
       <div className="project minimalcanvas">
         <header className="pageheader"><h1>47 strokes</h1></header>
-        {sharedMode && loaded && !writesEnabled && <p role="status">Submissions are not open yet.</p>}
-        <canvas aria-label="Draw one continuous stroke. Inspect links to explore existing strokes." ref={canvas} width={WIDTH} height={HEIGHT}
+        <p className="canvasavailability" role="status">{sharedMode && loaded && !writesEnabled ? "Submissions are not open yet." : ""}</p>
+        <div className="canvasframe">
+        <canvas aria-label="Drag to draw one continuous stroke. On desktop, hover to see a link and click to open it in a new tab." ref={canvas} width={WIDTH} height={HEIGHT}
           onPointerDown={down} onPointerMove={move} onPointerUp={finish}
-          onPointerCancel={(e) => { if (e.pointerId !== pointer.current) return; active.current = false; pointer.current = null; points.current = []; setDraft([]); draw(); }} />
+          onPointerLeave={() => { if (!active.current) setSelected(null); }}
+          onPointerCancel={(e) => { if (e.pointerId !== pointer.current) return; active.current = false; pointer.current = null; gesture.current = null; points.current = []; draw(); }} />
+        {selected && <div className="strokehover" role="tooltip" style={{ left: `clamp(8px, ${hoverAt.x}%, calc(100% - 228px))`, top: `clamp(8px, calc(${hoverAt.y}% + 14px), calc(100% - 44px))` }} title={selected.url || "No link"}>{selected.url || "No link"}</div>}
+        </div>
         <div className="canvascontrols">
           <div className="tools">
-            <FileButton disabled={!loaded || sending} onClick={() => { setInspect(!inspect); setSelected(null); }}>{inspect ? "Draw" : "Inspect links"}</FileButton>
             <FileButton disabled={!ready || !draft.length || !!pending.current} onClick={() => { setDraft([]); setError(""); }}>Undo</FileButton>
           </div>
           <span className="limit" aria-label="Stroke length remaining">{Math.max(0, MAX_LENGTH - used).toFixed(0)} / {MAX_LENGTH}</span>
         </div>
-        {selected && <div className="linkbox">{selected.url ? <><span>{new URL(selected.url).hostname}</span><a href={selected.url} target="_blank" rel="noopener noreferrer nofollow ugc" title="Visitor link, not checked or endorsed">Open link ↗</a></> : <span>No link</span>}</div>}
         <ProfilePicker kind={kind} setKind={setKind} value={url} setValue={setUrl} disabled={!ready || !!pending.current} />
-        {sharedMode && (writesEnabled || !!pending.current) && siteKey && <BotCheck siteKey={siteKey} action="stroke" onToken={setBotToken} nonce={botNonce} />}
+        {sharedMode && <div className="verificationslot">{(writesEnabled || !!pending.current) && siteKey && <BotCheck siteKey={siteKey} action="stroke" onToken={setBotToken} nonce={botNonce} />}</div>}
         <div className="tools submittools">
           {sharedMode && pending.current ? <FileButton disabled={sending} onClick={submit}>{sending ? "Confirming…" : "Retry saved submission"}</FileButton> :
-          <FileButton disabled={!ready || waiting || draft.length < 2 || (sharedMode && !botToken) || inspect} onClick={submit}>{waiting ? "Canvas resting" : "Add my stroke"}</FileButton>}
+          <FileButton disabled={!ready || waiting || draft.length < 2 || (sharedMode && !botToken)} onClick={submit}>{waiting ? "Canvas resting" : "Add my stroke"}</FileButton>}
         </div>
-        {error && <p className="error" role="status">{error}</p>}
+        <p className="error" role="status">{error}</p>
         <StrokeList strokes={strokes} />
         {!sharedMode && <details><summary>Private prototype controls</summary><FileButton onClick={reset}>Reset private demo</FileButton></details>}
       </div>

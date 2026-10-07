@@ -58,7 +58,7 @@ export function BotCheck({ siteKey, action, onToken, nonce }: {
       if (id) window.turnstile?.remove(id);
     };
   }, [siteKey, action, nonce, attempt]);
-  return <div className="botcheck">
+  return <div className="botcheck" data-verified={status === "ready"} style={{ visibility: status === "ready" ? "hidden" : "visible" }} aria-hidden={status === "ready"}>
     <div ref={root} aria-label="Bot check" />
     {status === "loading" && <small role="status">Checking…</small>}
     {status === "failed" && <div className="tools" role="status"><small>Bot check unavailable.</small><button type="button" className="file-button" onClick={() => setAttempt((n) => n + 1)}>Retry bot check</button></div>}

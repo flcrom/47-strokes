@@ -1,5 +1,19 @@
 import type { Stroke } from "./core.mjs";
 import { marks } from "./profile-marks";
+export function serviceMark(url: string) {
+  try {
+    const u = new URL(url);
+    if (u.protocol !== "https:" || u.username || u.password) return "Link";
+    const h = u.hostname.toLowerCase();
+    if (h === "github.com" || h === "www.github.com") return "GitHub";
+    if (["x.com", "www.x.com", "twitter.com", "www.twitter.com"].includes(h)) return "X";
+    if (["discord.com", "www.discord.com", "discordapp.com", "discord.gg"].includes(h)) return "Discord";
+    if (h === "signal.me") return "Signal";
+    if (h === "linkedin.com" || h === "www.linkedin.com") return "LinkedIn";
+    if (h === "instagram.com" || h === "www.instagram.com") return "Instagram";
+  } catch {}
+  return "Link";
+}
 export function strokePreview(points: number[][]) {
   if (!points.length) return "";
   const xs = points.map((p) => p[0]), ys = points.map((p) => p[1]);
@@ -13,7 +27,7 @@ export function StrokeList({ strokes, all = false }: { strokes: Stroke[]; all?: 
   return <section className="strokelist" aria-label={all ? "All 47 strokes, newest first" : "Recent 10 strokes, newest first"}>
     <div className="listheading"><h2>{all ? "All 47 strokes" : "Recent strokes"}</h2>{!all && <a href="/strokes">View all</a>}</div>
     <ol>{visible.map((stroke) => <li key={stroke.id}>
-      <span className="listlinkicon" aria-hidden="true" dangerouslySetInnerHTML={{ __html: marks.Link }} />
+      <span className="listlinkicon" aria-hidden="true" data-service={serviceMark(stroke.url)} dangerouslySetInnerHTML={{ __html: marks[serviceMark(stroke.url)] || marks.Link }} />
       {stroke.url ? <a className="strokelink" href={stroke.url} target="_blank" rel="noopener noreferrer nofollow ugc" title={stroke.url}>{stroke.url}</a> : <span className="strokelink nolink">No link</span>}
       <svg className="strokepreview" viewBox="0 0 64 64" role="img" aria-label="Individual stroke"><polyline points={strokePreview(stroke.points)} fill="none" stroke="#000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
     </li>)}</ol>

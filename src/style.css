@@ -658,5 +658,19 @@ input:focus {
 @media(max-width:360px) { .strokelist li { grid-template-columns: 24px minmax(0,1fr) 52px; gap: 8px; } .listlinkicon { width: 24px; height: 24px; } .listlinkicon > span { left: 2px !important; top: 2px !important; width: 20px !important; height: 20px !important; } .strokepreview { width: 52px; height: 52px; } }
 /* Keep service base URL and editable username on the same centered line. */
 .minimalcanvas .profileentry { display: flex; flex-wrap: nowrap; align-items: center; gap: 4px; padding: 0 10px; }
-.minimalcanvas .profileprefix { font-family: inherit; display: inline; flex: 0 0 auto; flex-basis: auto; padding-top: 0; font-size: 11px; }
-.minimalcanvas .profilefield input { display: block; flex: 1 1 0; width: 0; height: 60px; min-height: 60px; font-size: 11px; padding: 0; line-height: normal; }
+.minimalcanvas .profileprefix { font-family: inherit; display: inline; flex: 0 0 auto; flex-basis: auto; padding-top: 0; font-size: 14px; }
+.minimalcanvas .profilefield input { display: block; flex: 1 1 0; width: 0; height: 60px; min-height: 60px; font-size: 14px; padding: 0; line-height: normal; }
+
+.canvasframe { position: relative; }
+.strokehover { position: absolute; z-index: 2; box-sizing: border-box; width: 220px; max-width: calc(100% - 16px); padding: 9px 10px; border: 1px solid #bbb; background: #fff; color: #111; font: 11px monospace; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; pointer-events: none; }
+/* Transient verification and hover states never change surrounding layout. */
+.minimalcanvas .botcheck { height: 85px; min-height: 85px; position: relative; }
+.minimalcanvas .botcheck > div[aria-label="Bot check"] { height: 65px; }
+.minimalcanvas .botcheck > small { position: absolute; top: 68px; left: 0; }
+.minimalcanvas .botcheck > .tools { position: absolute; top: 0; left: 0; right: 0; margin: 0; height: 65px; }
+
+.minimalcanvas .error { height: 24px; margin: 12px 0; overflow-y: auto; }
+
+.minimalcanvas .canvasavailability { height: 20px; font-size: 12px; margin: 0 0 8px; overflow-y: auto; }
+
+.minimalcanvas .verificationslot { height: 85px; }
