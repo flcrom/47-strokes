@@ -78,6 +78,7 @@ export function ProfilePicker({
             }
             onChange={(e) => setValue(e.target.value)}
             placeholder={p.hint}
+            title={p.prefix ? p.prefix + value : value}
             type={p.link ? "url" : "text"}
             autoCapitalize="none"
             autoCorrect="off"

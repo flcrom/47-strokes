@@ -22,6 +22,7 @@ import {
 } from "./shared";
 import { BotCheck } from "./BotCheck";
 import { Admin } from "./Admin";
+import { StrokeList } from "./StrokeList";
 import { ProfilePicker } from "./ProfilePicker";
 import { profileURL } from "./profiles.mjs";
 const initial = seed();
@@ -286,6 +287,7 @@ function CanvasApp() {
     setError("");
     setNow(Date.now());
   };
+  if (window.location.pathname === "/strokes") return <FileCard><div className="project minimalcanvas allstrokes"><StrokeList strokes={strokes} all />{error && <p role="status">{error}</p>}</div></FileCard>;
   return (
     <FileCard>
       <div className="project minimalcanvas">
@@ -309,6 +311,7 @@ function CanvasApp() {
           <FileButton disabled={!ready || waiting || draft.length < 2 || (sharedMode && !botToken) || inspect} onClick={submit}>{waiting ? "Canvas resting" : "Add my stroke"}</FileButton>}
         </div>
         {error && <p className="error" role="status">{error}</p>}
+        <StrokeList strokes={strokes} />
         {!sharedMode && <details><summary>Private prototype controls</summary><FileButton onClick={reset}>Reset private demo</FileButton></details>}
       </div>
     </FileCard>
