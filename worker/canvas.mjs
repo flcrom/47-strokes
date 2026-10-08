@@ -23,7 +23,7 @@ export function advance(state, points, url, now, id) {
   const stroke = validate(points, url);
   return {
     version: state.version + 1,
-    strokes: [...state.strokes.slice(-46), { ...stroke, id }],
+    strokes: [...state.strokes.slice(-46), { ...stroke, id, at: now }],
     nextAllowed: now + COOLDOWN,
   };
 }
@@ -49,6 +49,12 @@ export class Canvas {
   async read() {
     const state = (await this.ctx.storage.get("canvas")) || initialState();
     await initializeHistory(this.ctx.storage, initialState());
+    // Older strokes carry no public time; fill it from the private history record when one exists.
+    for (const s of state.strokes) {
+      if (s.at || s.id.startsWith("seed-") || s.id.startsWith("intro-draw-one-line-")) continue;
+      const h = await this.ctx.storage.get("history:" + s.id);
+      if (h?.acceptedAt) s.at = h.acceptedAt;
+    }
     return state;
   }
   async fetch(request) {

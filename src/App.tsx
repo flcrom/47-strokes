@@ -7,6 +7,7 @@ import {
   accept,
   ageShade,
   nearestStroke,
+  remaining,
   pathLength,
   extendPath,
   MAX_LENGTH,
@@ -26,6 +27,7 @@ import { Admin } from "./Admin";
 import { StrokeList } from "./StrokeList";
 import { ProfilePicker } from "./ProfilePicker";
 import { profileURL } from "./profiles.mjs";
+import { formatStrokeTime } from "./StrokeList";
 const initial = seed();
 const sharedMode = import.meta.env.VITE_SHARED_CANVAS === "true";
 export function App() {
@@ -327,7 +329,7 @@ function CanvasApp() {
           onPointerDown={down} onPointerMove={move} onPointerUp={finish}
           onPointerLeave={() => { if (!active.current && !touchReveal) setSelected(null); }}
           onPointerCancel={(e) => { if (e.pointerId !== pointer.current) return; active.current = false; pointer.current = null; gesture.current = null; motion.current = null; points.current = []; draw(); }} />
-        {selected && <div className={`strokehover${touchReveal ? " touchreveal" : ""}`} role={touchReveal ? "group" : "tooltip"} style={{ left: `clamp(8px, ${hoverAt.x}%, calc(100% - 228px))`, top: `clamp(8px, calc(${hoverAt.y}% + 14px), calc(100% - 44px))` }} title={selected.url || "No link"}>{touchReveal && selected.url ? <a href={selected.url} target="_blank" rel="noopener noreferrer nofollow ugc" aria-label={`Open ${selected.url}`}>{selected.url}</a> : selected.url || "No link"}</div>}
+        {selected && <div className={`strokehover${touchReveal ? " touchreveal" : ""}`} role={touchReveal ? "group" : "tooltip"} style={{ left: `clamp(8px, ${hoverAt.x}%, calc(100% - 228px))`, top: `clamp(8px, calc(${hoverAt.y}% + 14px), calc(100% - 44px))` }} title={selected.url || "No link"}><div className="hoverbody">{touchReveal && selected.url ? <a href={selected.url} target="_blank" rel="noopener noreferrer nofollow ugc" aria-label={`Open ${selected.url}`}>{selected.url}</a> : <span>{selected.url || "No link"}</span>}{selected.at && <time dateTime={new Date(selected.at).toISOString()}>{formatStrokeTime(selected.at)}</time>}</div></div>}
         </div>
         <div className="canvascontrols">
           <div className="tools">
@@ -338,7 +340,7 @@ function CanvasApp() {
         <ProfilePicker kind={kind} setKind={setKind} value={url} setValue={setUrl} disabled={!ready || !!pending.current} />
         <div className="tools submittools">
           {sharedMode && pending.current ? <FileButton disabled={sending} onClick={submit}>{sending ? "Confirming…" : "Retry saved submission"}</FileButton> :
-          <FileButton disabled={!ready || waiting || draft.length < 2 || (sharedMode && !botToken)} onClick={submit}>{waiting ? "Canvas resting" : "Add my stroke"}</FileButton>}
+          <FileButton className={waiting ? "cooldownbtn" : ""} aria-label={waiting ? `Canvas resting, ${remaining(next, now)} left` : undefined} disabled={!ready || waiting || draft.length < 2 || (sharedMode && !botToken)} onClick={submit}>{waiting ? remaining(next, now) : "Add stroke"}</FileButton>}
         </div>
         {sharedMode && <div className="verificationslot">{(writesEnabled || !!pending.current) && siteKey && <BotCheck siteKey={siteKey} action="stroke" onToken={setBotToken} nonce={botNonce} collapseOnVerified />}</div>}
         <p className="error" role="status">{error}</p>

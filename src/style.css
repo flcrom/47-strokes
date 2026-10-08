@@ -687,3 +687,16 @@ input:focus {
 .strokehover.touchreveal a { pointer-events: auto; min-height: 44px; display: flex; align-items: center; color: inherit; display: block; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%; }
 
 .strokehover.touchreveal:has(a) { padding-top: 0; padding-bottom: 0; }
+
+.strokemeta { min-width: 0; display: grid; gap: 4px; }
+.stroketime { color: #777; font-size: 11px; white-space: nowrap; }
+.strokehover .hoverbody { display: grid; gap: 4px; min-width: 0; width: 100%; }
+.strokehover .hoverbody > span, .strokehover .hoverbody > a { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.strokehover .hoverbody > time { color: #777; }
+.strokehover.touchreveal:has(a) { padding: 0 10px 8px; }
+.strokehover.touchreveal .hoverbody { gap: 0; }
+.strokehover.touchreveal .hoverbody > time { min-height: 0; }
+.strokehover .hoverbody { align-content: start; }
+.strokehover.touchreveal .hoverbody > a { min-height: 0; padding: 12px 0 4px; display: block; }
+.strokehover.touchreveal:has(a) { padding: 0 10px 9px; }
+.cooldownbtn { font-variant-numeric: tabular-nums; min-width: 8.5em; }

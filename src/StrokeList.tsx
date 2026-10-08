@@ -14,6 +14,10 @@ export function serviceMark(url: string) {
   } catch {}
   return "Link";
 }
+export function formatStrokeTime(at?: number) {
+  if (!at) return "";
+  return new Date(at).toLocaleString(undefined, { year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+}
 export function strokePreview(points: number[][]) {
   if (!points.length) return "";
   const xs = points.map((p) => p[0]), ys = points.map((p) => p[1]);
@@ -29,7 +33,7 @@ export function StrokeList({ strokes, all = false }: { strokes: Stroke[]; all?: 
     {!visible.length && <p className="nolink">No visitor strokes yet.</p>}
     <ol>{visible.map((stroke) => <li key={stroke.id}>
       <span className="listlinkicon" aria-hidden="true" data-service={serviceMark(stroke.url)} dangerouslySetInnerHTML={{ __html: marks[serviceMark(stroke.url)] || marks.Link }} />
-      {stroke.url ? <a className="strokelink" href={stroke.url} target="_blank" rel="noopener noreferrer nofollow ugc" title={stroke.url}>{stroke.url}</a> : <span className="strokelink nolink">No link</span>}
+      <div className="strokemeta">{stroke.url ? <a className="strokelink" href={stroke.url} target="_blank" rel="noopener noreferrer nofollow ugc" title={stroke.url}>{stroke.url}</a> : <span className="strokelink nolink">No link</span>}{stroke.at && <time className="stroketime" dateTime={new Date(stroke.at).toISOString()}>{formatStrokeTime(stroke.at)}</time>}</div>
       <svg className="strokepreview" viewBox="0 0 64 64" role="img" aria-label="Individual stroke"><polyline points={strokePreview(stroke.points)} fill="none" stroke="#000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
     </li>)}</ol>
   </section>;

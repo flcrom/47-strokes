@@ -1,5 +1,5 @@
 export const WIDTH:number,HEIGHT:number,COOLDOWN:number;
-export type Stroke={id:string;points:number[][];url:string};
+export type Stroke={id:string;points:number[][];url:string;at?:number};
 export function seed():Stroke[];
 export function safeURL(input:string):string;
 export function validate(points:number[][],url:string):{points:number[][];url:string};
