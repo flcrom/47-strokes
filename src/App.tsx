@@ -323,7 +323,7 @@ function CanvasApp() {
     <FileCard>
       <div className="project minimalcanvas">
         <header className="pageheader">
-          <h1 className="headbox logobox"><img src="/logo.png" alt="47 strokes" width="640" height="516" /></h1>
+          <h1 className="headbox logobox"><img src="/logo.png" alt="47 strokes" width="725" height="920" /></h1>
           <nav className="headnav" aria-label="Site">
             <a className="headbox" href="https://flcrom.dev" target="_blank" rel="noopener noreferrer">Portfolio</a>
             <a className="headbox" href="#about" onClick={(e) => { e.preventDefault(); const d = document.getElementById("about") as HTMLDetailsElement | null; if (d) { d.open = true; d.scrollIntoView({ behavior: "smooth", block: "start" }); } }}>About</a>

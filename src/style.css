@@ -390,15 +390,15 @@ a {
 .pageheader .headbox { box-sizing: border-box; height: var(--h); border: 1px solid #ddd; margin: 0; padding: 0 18px; display: flex; align-items: center; justify-content: center; flex: none; color: #111; text-decoration: none; font-size: 14px; background: #fff; }
 .pageheader .headnav { display: contents; }
 .pageheader a.headbox:hover, .pageheader a.headbox:focus-visible { border-color: #111; }
-.pageheader .logobox { padding: 0; width: 91px; }
-.pageheader .logobox img { display: block; height: calc(var(--h) - 32px); width: auto; }
+.pageheader .logobox { padding: 0 18px; width: auto; }
+.pageheader .logobox img { display: block; height: 44px; width: auto; }
 .pageheader .sitenote { flex: 1; min-width: 0; justify-content: flex-start; padding: 0 16px; font-size: 12px; line-height: 1.5; color: #555; text-align: left; }
 .sitenote .noteshort { display: none; }
 @media (max-width: 640px) {
   .pageheader { --h: 60px; --gap: 6px; }
   .pageheader .headbox { padding: 0 10px; font-size: 12px; }
-  .pageheader .logobox { padding: 0; width: 73px; }
-  .pageheader .logobox img { height: calc(var(--h) - 24px); }
+  .pageheader .logobox { padding: 0 10px; width: auto; }
+  .pageheader .logobox img { height: 36px; }
   .pageheader .sitenote { padding: 0 8px; font-size: 10px; line-height: 1.35; }
   .sitenote .notefull { display: none; }
   .sitenote .noteshort { display: inline; }
