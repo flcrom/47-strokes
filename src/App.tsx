@@ -322,7 +322,14 @@ function CanvasApp() {
   return (
     <FileCard>
       <div className="project minimalcanvas">
-        <header className="pageheader"><h1><img src="/logo.png" alt="47 strokes" width="640" height="516" /></h1></header>
+        <header className="pageheader">
+          <h1 className="headbox logobox"><img src="/logo.png" alt="47 strokes" width="640" height="516" /></h1>
+          <nav className="headnav" aria-label="Site">
+            <a className="headbox" href="https://flcrom.dev" target="_blank" rel="noopener noreferrer">Portfolio</a>
+            <a className="headbox" href="#about" onClick={(e) => { e.preventDefault(); const d = document.getElementById("about") as HTMLDetailsElement | null; if (d) { d.open = true; d.scrollIntoView({ behavior: "smooth", block: "start" }); } }}>About</a>
+          </nav>
+          <p className="headbox sitenote"><span className="notefull">One shared canvas of 47 strokes. Draw a line and leave a link; a new stroke pushes the oldest one off. The canvas rests five minutes between strokes.</span><span className="noteshort">One shared canvas of 47 strokes. Draw a line, leave a link.</span></p>
+        </header>
         <p className="canvasavailability" role="status">{sharedMode && loaded && !writesEnabled ? "Submissions are not open yet." : ""}</p>
         <div className="canvasframe">
         <canvas aria-label="Drag to draw one continuous stroke. On desktop, hover to see a link and click to open it in a new tab." ref={canvas} width={WIDTH} height={HEIGHT}
@@ -345,7 +352,7 @@ function CanvasApp() {
         {sharedMode && <div className="verificationslot">{(writesEnabled || !!pending.current) && siteKey && <BotCheck siteKey={siteKey} action="stroke" onToken={setBotToken} nonce={botNonce} collapseOnVerified />}</div>}
         <p className="error" role="status">{error}</p>
         <StrokeList strokes={strokes} />
-        <details className="whyexists">
+        <details className="whyexists" id="about">
           <summary>Why This Exists?</summary>
           <p>This canvas captures a rotating gallery of exactly 47 strokes. When a new stroke is added, the least recently added one disappears, keeping the collection in constant flux. Why forty-seven? Because I love the number. Why does this exist? So people visiting my site have something to interact with and a place to leave their trace.</p>
         </details>
