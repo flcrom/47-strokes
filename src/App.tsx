@@ -324,11 +324,6 @@ function CanvasApp() {
       <div className="project minimalcanvas">
         <header className="pageheader">
           <h1 className="headbox logobox"><img src="/logo.png" alt="47 strokes" width="725" height="920" /></h1>
-          <nav className="headnav" aria-label="Site">
-            <a className="headbox" href="https://flcrom.dev" target="_blank" rel="noopener noreferrer">Portfolio</a>
-            <a className="headbox" href="#about" onClick={(e) => { e.preventDefault(); const d = document.getElementById("about") as HTMLDetailsElement | null; if (d) { d.open = true; d.scrollIntoView({ behavior: "smooth", block: "start" }); } }}>About</a>
-          </nav>
-          <p className="headbox sitenote"><span className="notefull">One shared canvas of 47 strokes. Draw a line and leave a link; a new stroke pushes the oldest one off. The canvas rests five minutes between strokes.</span><span className="noteshort">One shared canvas of 47 strokes. Draw a line, leave a link.</span></p>
         </header>
         <p className="canvasavailability" role="status">{sharedMode && loaded && !writesEnabled ? "Submissions are not open yet." : ""}</p>
         <div className="canvasframe">
