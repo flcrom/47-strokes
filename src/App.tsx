@@ -322,7 +322,7 @@ function CanvasApp() {
   return (
     <FileCard>
       <div className="project minimalcanvas">
-        <header className="pageheader"><h1>47 strokes</h1></header>
+        <header className="pageheader"><h1><img src="/logo.png" alt="47 strokes" width="640" height="516" /></h1></header>
         <p className="canvasavailability" role="status">{sharedMode && loaded && !writesEnabled ? "Submissions are not open yet." : ""}</p>
         <div className="canvasframe">
         <canvas aria-label="Drag to draw one continuous stroke. On desktop, hover to see a link and click to open it in a new tab." ref={canvas} width={WIDTH} height={HEIGHT}

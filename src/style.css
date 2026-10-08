@@ -386,6 +386,11 @@ a {
   letter-spacing: -0.03em;
   margin: 0 0 22px;
 }
+.pageheader h1 img {
+  display: block;
+  height: clamp(72px, 12vw, 104px);
+  width: auto;
+}
 .pageheader p {
   margin: 0 0 30px;
 }
