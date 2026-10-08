@@ -728,13 +728,12 @@ input:focus {
 .picker.idle .profilefield { background: #f6f6f6; border-color: #ddd; }
 .picker.idle .profileinputmark { border-right-color: #ddd; }
 .picker.idle .profilefield input { background: #f6f6f6; }
-.picker.chosen .profileprefix ~ input::placeholder { color: #fff; background: #111; }
-.picker.chosen .profileprefix ~ input { padding: 0 4px; min-height: 24px; height: 24px; }
-@media (max-width: 650px) { .picker.chosen .profileprefix ~ input { display: block; height: 24px; min-height: 24px; padding: 0 4px; } }
+.picker.chosen .profileprefix ~ input { padding: 0; min-height: 24px; height: 24px; }
+@media (max-width: 650px) { .picker.chosen .profileprefix ~ input { display: block; height: 24px; min-height: 24px; padding: 0; } }
 @media (max-width: 650px) {
   .picker .profilechoices { display: flex; flex-wrap: wrap; gap: 8px; }
   .picker .profileentry { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; padding: 6px 10px; gap: 2px; }
   .picker .profileprefix { padding: 0; flex-basis: auto; max-width: 100%; }
 }
-@media (max-width: 650px) { .picker .profileentry > input { align-self: stretch; } .picker.chosen .profileprefix ~ input { align-self: flex-start; } .picker.chosen .profileprefix ~ input[style*="width"] { flex: none; } .picker.chosen .profileentry > input:only-child { height: 34px; } }
+@media (max-width: 650px) { .picker .profileentry > input { align-self: stretch; } .picker.chosen .profileprefix ~ input { align-self: stretch; flex: none; width: 100%; } .picker.chosen .profileentry > input:only-child { height: 34px; } }
 @media (max-width: 650px) { .minimalcanvas .picker .profileentry > input:only-child { flex: none; width: 100%; height: 34px; min-height: 34px; } }

@@ -85,7 +85,6 @@ export function ProfilePicker({
                             ? 32
                             : 16
             }
-            style={chosen && p.prefix && !value ? { width: `${p.hint.length + 2}ch`, flex: "none" } : undefined}
             onChange={(e) => setValue(e.target.value)}
             placeholder={chosen ? p.hint : ""}
             title={p.prefix ? p.prefix + value : value}
