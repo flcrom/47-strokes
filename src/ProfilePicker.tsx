@@ -23,35 +23,39 @@ export function ProfilePicker({
   setValue: (v: string) => void;
   disabled: boolean;
 }) {
-  const [slots, setSlots] = useState(() =>
-    profiles.filter((p) => p.id !== kind && p.id !== "monkeytype").map((p) => p.id),
-  );
-  useEffect(() => {
-    setSlots((old) =>
-      old.includes(kind)
-        ? profiles.filter((p) => p.id !== kind && p.id !== "monkeytype").map((p) => p.id)
-        : old,
-    );
-  }, [kind]);
+  const [chosen, setChosen] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
   function choose(id: string) {
-    setSlots((old) => old.map((x) => (x === id ? kind : x)));
+    if (id !== kind || !chosen) setValue("");
     setKind(id);
-    setValue("");
+    setChosen(true);
+    setTimeout(() => inputRef.current?.focus(), 0);
   }
-  const container = useRef<HTMLElement>(null);
-  const [visibleCount, setVisibleCount] = useState(6);
-  useEffect(() => {
-    if (!container.current) return;
-    const observer = new ResizeObserver(([entry]) => setVisibleCount(Math.max(1, Math.floor((entry.contentRect.width + 12) / 74))));
-    observer.observe(container.current);
-    return () => observer.disconnect();
-  }, []);
   const p = profiles.find((p) => p.id === kind)!;
   return (
-    <section className="picker" ref={container}>
+    <section className={"picker" + (chosen ? " chosen" : " idle")}>
+      <div className="profilechoices" role="group" aria-label="Link type">
+        {profiles
+          .filter((p) => p.id !== "monkeytype")
+          .map((p) => (
+            <div className="profilecell" key={p.id}>
+              <button
+                type="button"
+                disabled={disabled}
+                aria-label={p.name}
+                aria-pressed={chosen && p.id === kind}
+                onClick={() => {
+                  choose(p.id);
+                }}
+              >
+                <Mark name={p.name} />
+              </button>
+            </div>
+          ))}
+      </div>
       <div className="profilefield">
         <div className="profileinputmark">
-          {kind === "monkeytype" ? (
+          {!chosen ? null : kind === "monkeytype" ? (
             <span aria-hidden="true">MT</span>
           ) : (
             <Mark name={p.name} />
@@ -61,7 +65,8 @@ export function ProfilePicker({
           {p.prefix && <span className="profileprefix">{p.prefix}</span>}
           <input
             id="profile-input"
-            disabled={disabled}
+            disabled={disabled || !chosen}
+            ref={inputRef}
             value={value}
             maxLength={
               p.link
@@ -74,12 +79,17 @@ export function ProfilePicker({
                       ? 100
                       : kind === "instagram"
                         ? 30
-                        : 16
+                        : kind === "reddit"
+                          ? 20
+                          : kind === "telegram"
+                            ? 32
+                            : 16
             }
+            style={chosen && p.prefix && !value ? { width: `${p.hint.length + 2}ch`, flex: "none" } : undefined}
             onChange={(e) => setValue(e.target.value)}
-            placeholder={p.hint}
+            placeholder={chosen ? p.hint : ""}
             title={p.prefix ? p.prefix + value : value}
-            type={p.link ? "url" : "text"}
+            type={p.link && !(p as any).hybrid ? "url" : "text"}
             autoCapitalize="none"
             autoCorrect="off"
             spellCheck={false}
@@ -90,27 +100,6 @@ export function ProfilePicker({
             }
           />
         </div>
-      </div>
-      <div className="profilechoices" role="group" aria-label="Link type">
-        {slots
-          .map((id) => profiles.find((p) => p.id === id)!)
-          .filter((p) => p.id !== "monkeytype")
-          .slice(0, visibleCount)
-          .map((p, index) => (
-            <div className="profilecell" key={index}>
-              <button
-                type="button"
-                disabled={disabled}
-                aria-label={p.name}
-                aria-pressed={p.id === kind}
-                onClick={() => {
-                  choose(p.id);
-                }}
-              >
-                <Mark name={p.name} />
-              </button>
-            </div>
-          ))}
       </div>
 
     </section>

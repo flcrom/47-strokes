@@ -58,3 +58,21 @@ test("Signal rejects malformed share routes", () => {
   ])
     assert.throws(() => profileURL("signal", v));
 });
+
+test("Reddit, Telegram and YouTube inputs", () => {
+  assert.equal(profileURL("reddit", "flcrom"), "https://www.reddit.com/user/flcrom");
+  assert.equal(profileURL("telegram", "@flcrom"), "https://t.me/flcrom");
+  assert.equal(profileURL("youtube", "@flcrom"), "https://www.youtube.com/@flcrom");
+  assert.equal(profileURL("youtube", "flcrom"), "https://www.youtube.com/@flcrom");
+  for (const [u, o] of [
+    ["https://www.youtube.com/@flcrom/", "https://www.youtube.com/@flcrom"],
+    ["https://youtube.com/c/flcrom", "https://www.youtube.com/c/flcrom"],
+    ["https://www.youtube.com/user/flcrom", "https://www.youtube.com/user/flcrom"],
+    ["https://www.youtube.com/channel/UCabcdefghijklmnopqrstuv", "https://www.youtube.com/channel/UCabcdefghijklmnopqrstuv"],
+  ]) assert.equal(profileURL("youtube", u), o);
+  for (const x of ["a", "http://youtube.com/@a1b", "https://evil.com/@flcrom", "https://www.youtube.com/watch?v=x", "https://www.youtube.com/channel/abc"])
+    assert.throws(() => profileURL("youtube", x));
+  assert.throws(() => profileURL("reddit", "ab"));
+  assert.throws(() => profileURL("telegram", "abc"));
+  assert.throws(() => profileURL("telegram", "a/b123"));
+});

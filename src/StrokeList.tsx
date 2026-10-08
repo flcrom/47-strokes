@@ -11,6 +11,9 @@ export function serviceMark(url: string) {
     if (h === "signal.me") return "Signal";
     if (h === "linkedin.com" || h === "www.linkedin.com") return "LinkedIn";
     if (h === "instagram.com" || h === "www.instagram.com") return "Instagram";
+    if (["reddit.com", "www.reddit.com", "old.reddit.com"].includes(h)) return "Reddit";
+    if (["t.me", "telegram.me", "telegram.org"].includes(h)) return "Telegram";
+    if (["youtube.com", "www.youtube.com", "m.youtube.com", "youtu.be"].includes(h)) return "YouTube";
   } catch {}
   return "Link";
 }

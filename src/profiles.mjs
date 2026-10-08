@@ -41,6 +41,16 @@ export const profiles = [
     hint: "username",
     prefix: "https://www.instagram.com/",
   },
+  { id: "reddit", name: "Reddit", hint: "username", prefix: "https://www.reddit.com/user/" },
+  { id: "telegram", name: "Telegram", hint: "username", prefix: "https://t.me/" },
+  {
+    id: "youtube",
+    name: "YouTube",
+    hint: "@handle or channel link",
+    prefix: "",
+    link: true,
+    hybrid: true,
+  },
   {
     id: "monkeytype",
     name: "Monkeytype",
@@ -54,6 +64,29 @@ export function profileURL(id, value) {
   if (id === "manual") return v;
   const p = profiles.find((p) => p.id === id);
   if (!p) throw Error("Choose a link type.");
+  if (id === "youtube") {
+    if (!/^https?:\/\//i.test(v)) {
+      const h = v.replace(/^@/, "");
+      if (!/^[A-Za-z0-9._-]{3,30}$/.test(h))
+        throw Error("Enter your @handle or paste your channel link.");
+      return "https://www.youtube.com/@" + encodeURIComponent(h);
+    }
+    let y;
+    try {
+      y = new URL(v);
+    } catch {
+      throw Error("Paste a complete HTTPS channel link.");
+    }
+    if (
+      y.protocol !== "https:" ||
+      y.username ||
+      y.password ||
+      !["youtube.com", "www.youtube.com", "m.youtube.com"].includes(y.hostname) ||
+      !/^\/(@[A-Za-z0-9._-]{3,30}|c\/[^/]+|user\/[^/]+|channel\/UC[A-Za-z0-9_-]{22})\/?$/.test(y.pathname)
+    )
+      throw Error("Paste a YouTube channel link (@handle, /c/, /user/ or /channel/).");
+    return "https://www.youtube.com" + y.pathname.replace(/\/$/, "");
+  }
   if (p.link) {
     let u;
     try {
@@ -91,7 +124,11 @@ export function profileURL(id, value) {
           ? /^[a-zA-Z0-9_](?:[a-zA-Z0-9_.]{0,28}[a-zA-Z0-9_])?$/
           : id === "linkedin"
             ? /^[a-zA-Z0-9-]{3,100}$/
-            : /^[a-zA-Z0-9_-][a-zA-Z0-9_.-]{0,15}$/;
+            : id === "reddit"
+              ? /^[a-zA-Z0-9_-]{3,20}$/
+              : id === "telegram"
+                ? /^[a-zA-Z][a-zA-Z0-9_]{4,31}$/
+                : /^[a-zA-Z0-9_-][a-zA-Z0-9_.-]{0,15}$/;
   if (!pattern.test(handle) || (id === "github" && handle.includes("--")))
     throw Error("Enter only your username or profile slug, not a URL.");
   return p.prefix + encodeURIComponent(handle);
