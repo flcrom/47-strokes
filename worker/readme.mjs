@@ -51,8 +51,8 @@ function overlays() {
   ].join("");
 }
 
-function content(state) {
-  return `<rect width="100%" height="100%" fill="white"/>${state.strokes
+function content(state, x0, x1) {
+  return `<rect x="${x0}" y="0" width="${x1 - x0}" height="${HEIGHT}" fill="white"/>${state.strokes
     .map(
       (s, i) =>
         `<polyline points="${s.points.map((p) => p.join(",")).join(" ")}" fill="none" stroke="${ageShade(i, state.strokes.length)}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`,
@@ -64,5 +64,5 @@ export function readmeImage(state, slice) {
   const range = README_SLICES[slice];
   if (!range) return null;
   const [x0, x1] = range;
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${x1 - x0}" height="${HEIGHT}" viewBox="${x0} 0 ${x1 - x0} ${HEIGHT}" role="img" aria-label="47 strokes shared canvas">${content(state)}</svg>`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${x1 - x0}" height="${HEIGHT}" viewBox="${x0} 0 ${x1 - x0} ${HEIGHT}" role="img" aria-label="47 strokes shared canvas">${content(state, x0, x1)}</svg>`;
 }
