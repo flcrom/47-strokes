@@ -10,6 +10,7 @@ import {
   HEIGHT,
 } from "../src/core.mjs";
 import { introStrokes } from "./intro.mjs";
+import { readmeImage } from "./readme.mjs";
 export function initialState() {
   return { version: 0, strokes: structuredClone(introStrokes), nextAllowed: 0 };
 }
@@ -155,6 +156,18 @@ export class Canvas {
             "X-Content-Type-Options": "nosniff",
           },
         });
+      const readmeSlice = /^\/readme\/([0-6])\.svg$/.exec(path);
+      if (readmeSlice) {
+        const svg = readmeImage(state, Number(readmeSlice[1]));
+        if (svg)
+          return new Response(svg, {
+            headers: {
+              "Content-Type": "image/svg+xml",
+              "Cache-Control": "public,max-age=15",
+              "X-Content-Type-Options": "nosniff",
+            },
+          });
+      }
       return Response.json(snapshot(state, now), {
         headers: { "Cache-Control": "no-store" },
       });

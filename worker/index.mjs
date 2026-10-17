@@ -89,7 +89,8 @@ export default {
       url.pathname === "/api/canvas" ||
       url.pathname === "/api/strokes" ||
       url.pathname === "/api/report" ||
-      url.pathname === "/canvas.svg"
+      url.pathname === "/canvas.svg" ||
+      /^\/readme\/[0-6]\.svg$/.test(url.pathname)
     ) {
       const method = request.method;
       const write = ["/api/strokes", "/api/report"].includes(url.pathname);
