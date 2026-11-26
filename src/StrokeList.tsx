@@ -37,7 +37,7 @@ export function StrokeList({ strokes, all = false }: { strokes: Stroke[]; all?: 
     <ol>{visible.map((stroke) => <li key={stroke.id}>
       <span className="listlinkicon" aria-hidden="true" data-service={serviceMark(stroke.url)} dangerouslySetInnerHTML={{ __html: marks[serviceMark(stroke.url)] || marks.Link }} />
       <div className="strokemeta">{stroke.url ? <a className="strokelink" href={stroke.url} target="_blank" rel="noopener noreferrer nofollow ugc" title={stroke.url}>{stroke.url}</a> : <span className="strokelink nolink">No link</span>}{stroke.at && <time className="stroketime" dateTime={new Date(stroke.at).toISOString()}>{formatStrokeTime(stroke.at)}</time>}</div>
-      <svg className="strokepreview" viewBox="0 0 64 64" role="img" aria-label="Individual stroke"><polyline points={strokePreview(stroke.points)} fill="none" stroke="#000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+      <svg className="strokepreview" viewBox="0 0 64 64" role="img" aria-label="Individual stroke"><polyline points={strokePreview(stroke.points)} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
     </li>)}</ol>
   </section>;
 }

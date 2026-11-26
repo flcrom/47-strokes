@@ -1,6 +1,10 @@
+:root{--bg:#fff;--bg2:#f6f6f6;--fg:#111;--mid:#555;--soft:#888;--line:#ddd;--err:#a11;--veil:rgba(255,255,255,.65);--logo-filter:none;color-scheme:light}
+:root[data-theme=dark]{--bg:#0b0b0b;--bg2:#161616;--fg:#eee;--mid:#aaa;--soft:#8a8a8a;--line:#2e2e2e;--err:#ff6b6b;--veil:rgba(11,11,11,.65);--logo-filter:invert(1);color-scheme:dark}
+.pageheader .logobox img{filter:var(--logo-filter)}
+.themetoggle{margin-left:auto;align-self:flex-start;background:var(--bg);color:var(--fg);border:1px solid var(--line);height:36px;padding:0 12px;font:12px system-ui,sans-serif;cursor:pointer}
 .demo {
   font-size: 12px;
-  color: #666;
+  color: var(--mid);
   margin: 10px 0 24px;
 }
 canvas {
@@ -8,8 +12,8 @@ canvas {
   width: 100%;
   height: auto;
   aspect-ratio: 2;
-  background: white;
-  border: 1px solid #ddd;
+  background: var(--bg);
+  border: 1px solid var(--line);
   touch-action: none;
   cursor: crosshair;
 }
@@ -23,7 +27,7 @@ canvas {
 .hint,
 .limit {
   font-size: 12px;
-  color: #666;
+  color: var(--mid);
 }
 .url {
   display: block;
@@ -34,11 +38,11 @@ canvas {
   display: block;
   width: 100%;
   box-sizing: border-box;
-  background: white;
-  border: 1px solid #bbb;
+  background: var(--bg);
+  border: 1px solid var(--line);
   border-radius: 0;
   padding: 12px;
-  color: #111;
+  color: var(--fg);
   font: inherit;
   margin-top: 8px;
   min-height: 44px;
@@ -47,23 +51,23 @@ canvas {
   display: flex;
   gap: 15px;
   flex-wrap: wrap;
-  border-left: 2px solid #111;
+  border-left: 2px solid var(--fg);
   padding: 12px;
   font-size: 13px;
 }
 .linkbox small {
   width: 100%;
-  color: #666;
+  color: var(--mid);
 }
 .error {
-  color: #a11;
+  color: var(--err);
   min-height: 24px;
   font-size: 13px;
 }
 details {
   margin: 24px 0;
   font-size: 12px;
-  color: #555;
+  color: var(--mid);
 }
 summary {
   cursor: pointer;
@@ -72,14 +76,14 @@ summary {
 .rest {
   position: fixed;
   inset: 0;
-  background: white;
+  background: var(--bg);
   z-index: 99;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 24px;
   text-align: center;
-  color: #111;
+  color: var(--fg);
 }
 .restinner {
   max-width: 420px;
@@ -97,7 +101,7 @@ summary {
 .rest small {
   display: block;
   font-size: 11px;
-  color: #888;
+  color: var(--soft);
   margin-top: 28px;
 }
 .rest details {
@@ -107,7 +111,7 @@ button:focus-visible,
 a:focus-visible,
 input:focus-visible,
 summary:focus-visible {
-  outline: 2px solid #111;
+  outline: 2px solid var(--fg);
   outline-offset: 4px;
 }
 
@@ -135,7 +139,7 @@ dialog.rest {
   display: flex;
 }
 dialog.rest::backdrop {
-  background: white;
+  background: var(--bg);
 }
 
 .ghostcanvas {
@@ -159,16 +163,16 @@ dialog.rest::backdrop {
   margin: 8px;
 }
 .restinner {
-  background: rgba(255, 255, 255, 0.65);
+  background: var(--veil);
 }
 .project {
-  --ds-ink: #111;
-  --ds-ink-2: #555;
-  --ds-ink-4: #aaa;
-  --ds-teal: #111;
-  --ds-red: #111;
-  --ds-hairline: #ddd;
-  color: #111;
+  --ds-ink: var(--fg);
+  --ds-ink-2: var(--mid);
+  --ds-ink-4: var(--soft);
+  --ds-teal: var(--fg);
+  --ds-red: var(--fg);
+  --ds-hairline: var(--line);
+  color: var(--fg);
 }
 .project button {
   transition:
@@ -176,7 +180,7 @@ dialog.rest::backdrop {
     color 0.15s;
 }
 .project .error {
-  color: #111;
+  color: var(--fg);
 }
 .eyebrow {
   text-transform: uppercase;
@@ -194,8 +198,8 @@ dialog.rest::backdrop {
 .canvasbar {
   font: 10px monospace;
   padding: 12px 0;
-  border-top: 1px solid #ddd;
-  color: #555;
+  border-top: 1px solid var(--line);
+  color: var(--mid);
 }
 .sectiontop h2,
 .rules h2 {
@@ -205,10 +209,10 @@ dialog.rest::backdrop {
 }
 .sectiontop > span {
   font: 10px monospace;
-  color: #666;
+  color: var(--mid);
 }
 .picker {
-  border-top: 1px solid #ddd;
+  border-top: 1px solid var(--line);
   margin-top: 24px;
   padding-top: 20px;
 }
@@ -222,24 +226,24 @@ dialog.rest::backdrop {
   display: flex;
   align-items: center;
   gap: 8px;
-  background: #fff;
-  border: 1px solid #ddd;
+  background: var(--bg);
+  border: 1px solid var(--line);
   border-radius: 3px;
-  color: #555;
+  color: var(--mid);
   padding: 10px;
   min-height: 44px;
   font: 12px inherit;
   cursor: pointer;
 }
 .profilechoices button[aria-pressed="true"] {
-  color: white;
-  background: #111;
-  border-color: #111;
+  color: var(--bg);
+  background: var(--fg);
+  border-color: var(--fg);
 }
 .profilefield {
   display: flex;
   align-items: center;
-  border: 1px solid #bbb;
+  border: 1px solid var(--line);
   border-radius: 3px;
   padding: 0 12px;
   gap: 6px;
@@ -247,13 +251,13 @@ dialog.rest::backdrop {
 }
 .profilefield > span {
   font: 11px monospace;
-  color: #666;
+  color: var(--mid);
   overflow-wrap: anywhere;
 }
 .profilefield input {
   border: 0;
-  background: #fff;
-  color: #111;
+  background: var(--bg);
+  color: var(--fg);
   min-width: 0;
   width: 100%;
   min-height: 44px;
@@ -264,14 +268,14 @@ dialog.rest::backdrop {
   display: block;
   font-size: 11px;
   line-height: 1.6;
-  color: #666;
+  color: var(--mid);
   margin-top: 10px;
 }
 .limit {
   font-variant-numeric: tabular-nums;
 }
 .rules {
-  border-top: 1px solid #ddd;
+  border-top: 1px solid var(--line);
   padding-top: 24px;
   margin-bottom: 36px;
 }
@@ -283,7 +287,7 @@ dialog.rest::backdrop {
 }
 .rules p {
   font-size: 12px;
-  color: #666;
+  color: var(--mid);
   margin: 0;
   line-height: 1.7;
 }
@@ -291,13 +295,13 @@ dialog.rest::backdrop {
   display: block;
   font-size: 13px;
   font-weight: 500;
-  color: #111;
+  color: var(--fg);
 }
 .project .file-button {
   border-radius: 3px;
 }
 .project .restinner {
-  color: #111;
+  color: var(--fg);
 }
 @media (max-width: 600px) {
   .sectiontop {
@@ -336,17 +340,17 @@ dialog.rest::backdrop {
   overflow-wrap: normal;
 }
 .profilefield input::placeholder {
-  color: #888;
+  color: var(--soft);
   opacity: 1;
 }
 .project .file-button:disabled,
 .profilechoices button:disabled {
-  color: #aaa;
-  border-color: #ddd;
-  background: #fff;
+  color: var(--soft);
+  border-color: var(--line);
+  background: var(--bg);
 }
 .project input {
-  color: #111;
+  color: var(--fg);
 }
 @media (max-width: 600px) {
   .profilefield > span {
@@ -358,8 +362,8 @@ dialog.rest::backdrop {
 }
 body {
   margin: 0;
-  background: #fff;
-  color: #111;
+  background: var(--bg);
+  color: var(--fg);
   font:
     14px/1.7 system-ui,
     -apple-system,
@@ -372,7 +376,7 @@ input {
   font: inherit;
 }
 a {
-  color: #111;
+  color: var(--fg);
 }
 .page {
   max-width: 1040px;
@@ -387,7 +391,7 @@ a {
   margin: 0 0 22px;
 }
 .pageheader { --h: 76px; --gap: 12px; display: flex; align-items: stretch; gap: var(--gap); margin-bottom: 22px; }
-.pageheader .headbox { box-sizing: border-box; height: var(--h); border: 1px solid #ddd; margin: 0; padding: 0 18px; display: flex; align-items: center; justify-content: center; flex: none; color: #111; text-decoration: none; font-size: 14px; background: #fff; }
+.pageheader .headbox { box-sizing: border-box; height: var(--h); border: 1px solid var(--line); margin: 0; padding: 0 18px; display: flex; align-items: center; justify-content: center; flex: none; color: var(--fg); text-decoration: none; font-size: 14px; background: var(--bg); }
 .pageheader .logobox { padding: 0 18px; width: auto; }
 .pageheader .logobox img { display: block; height: 44px; width: auto; }
 @media (max-width: 640px) {
@@ -400,29 +404,29 @@ a {
   margin: 0 0 30px;
 }
 .file-button {
-  background: #111;
-  color: #fff;
-  border: 1px solid #111;
+  background: var(--fg);
+  color: var(--bg);
+  border: 1px solid var(--fg);
   padding: 10px 16px;
   min-height: 44px;
   cursor: pointer;
 }
 .file-button:disabled {
-  color: #aaa;
-  background: #fff;
-  border-color: #ddd;
+  color: var(--soft);
+  background: var(--bg);
+  border-color: var(--line);
   cursor: default;
 }
 .caption,
 footer {
   font-size: 12px;
-  color: #666;
+  color: var(--mid);
 }
 .caption {
   margin: 24px 0;
 }
 footer {
-  border-top: 1px solid #ddd;
+  border-top: 1px solid var(--line);
   padding-top: 22px;
   margin-top: 24px;
 }
@@ -433,13 +437,13 @@ input:focus {
   outline: none;
 }
 .profilefield:focus-within {
-  outline: 2px solid #111;
+  outline: 2px solid var(--fg);
   outline-offset: 3px;
 }
 .restinner .file-button {
-  background: #fff;
-  color: #111;
-  border-color: #ddd;
+  background: var(--bg);
+  color: var(--fg);
+  border-color: var(--line);
 }
 .restinner details {
   margin-top: 30px;
@@ -468,7 +472,7 @@ input:focus {
   display: block;
   font-size: 11px;
   margin-top: 5px;
-  color: #111;
+  color: var(--fg);
 }
 .profilechoices button {
   display: block;
@@ -477,18 +481,18 @@ input:focus {
   height: 62px;
   min-height: 62px;
   padding: 0;
-  border: 1px solid #aaa;
+  border: 1px solid var(--soft);
   border-radius: 0;
-  background: #fff;
-  color: #111;
+  background: var(--bg);
+  color: var(--fg);
   transition: none;
 }
 .profilechoices button:hover:not(:disabled) {
-  border-color: #111;
+  border-color: var(--fg);
   filter: none;
 }
 .profilechoices button:focus-visible {
-  outline: 2px solid #111;
+  outline: 2px solid var(--fg);
   outline-offset: 3px;
 }
 .profilemark {
@@ -515,8 +519,8 @@ input:focus {
 }
 .profilechoices button:disabled {
   opacity: 1;
-  color: #111;
-  border-color: #aaa;
+  color: var(--fg);
+  border-color: var(--soft);
   cursor: default;
 }
 .profilefield {
@@ -533,7 +537,7 @@ input:focus {
   width: 61px;
   height: 60px;
   flex-shrink: 0;
-  border-right: 1px solid #aaa;
+  border-right: 1px solid var(--soft);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -548,7 +552,7 @@ input:focus {
 }
 .profileprefix {
   font: 11px monospace;
-  color: #666;
+  color: var(--mid);
   white-space: nowrap;
 }
 .profilefield input {
@@ -559,17 +563,17 @@ input:focus {
   flex: 1;
 }
 .profilefield:focus-within {
-  outline: 2px solid #111;
+  outline: 2px solid var(--fg);
   outline-offset: 3px;
 }
 .legacyprofile {
   display: flex;
   align-items: center;
   gap: 8px;
-  background: #fff;
-  border: 1px solid #ddd;
+  background: var(--bg);
+  border: 1px solid var(--line);
   border-radius: 3px;
-  color: #555;
+  color: var(--mid);
   padding: 10px;
   min-height: 44px;
   font: 12px inherit;
@@ -586,8 +590,8 @@ input:focus {
   stroke-linejoin: round;
 }
 .legacyprofile[aria-pressed="true"] {
-  background: #111;
-  color: #fff;
+  background: var(--fg);
+  color: var(--bg);
 }
 @media (max-width: 650px) {
   .profilechoices {
@@ -645,25 +649,25 @@ input:focus {
 .minimalcanvas .pageheader { margin-bottom: 24px; }
 .canvascontrols { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 12px 0 24px; }
 .canvascontrols .tools { margin: 0; }
-.canvascontrols .limit { margin-left: auto; text-align: right; font: 11px monospace; color: #555; white-space: nowrap; }
+.canvascontrols .limit { margin-left: auto; text-align: right; font: 11px monospace; color: var(--mid); white-space: nowrap; }
 .minimalcanvas .picker { margin-top: 0; padding-top: 0; border-top: 0; }
 .minimalcanvas .profilechoices { display: flex; flex-wrap: nowrap; gap: 12px; margin: 12px 0 20px; }
 .minimalcanvas .botcheck { width: 100%; min-height: 65px; }
 .minimalcanvas .submittools { margin-top: 20px; }
 @media (max-width: 360px) { .minimalcanvas { margin-left: -6px; margin-right: -6px; } .canvascontrols { align-items: flex-start; } .canvascontrols .tools { gap: 6px; } .canvascontrols .file-button { padding: 10px; } }
 
-.strokelist { margin-top: 32px; border-top: 1px solid #ddd; padding-top: 20px; }
+.strokelist { margin-top: 32px; border-top: 1px solid var(--line); padding-top: 20px; }
 .listheading { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 12px; }
 .listheading h2 { margin: 0; font-size: 16px; font-weight: 400; }
-.listheading a { color: #111; font-size: 12px; white-space: nowrap; }
+.listheading a { color: var(--fg); font-size: 12px; white-space: nowrap; }
 .strokelist ol { padding: 0; margin: 0; list-style: none; }
-.strokelist li { display: grid; grid-template-columns: 32px minmax(0,1fr) 64px; gap: 12px; align-items: center; border-bottom: 1px solid #ddd; min-width: 0; padding: 12px 0; }
+.strokelist li { display: grid; grid-template-columns: 32px minmax(0,1fr) 64px; gap: 12px; align-items: center; border-bottom: 1px solid var(--line); min-width: 0; padding: 12px 0; }
 .listlinkicon { position: relative; width: 32px; height: 32px; display: block; }
 .listlinkicon > span { left: 4px !important; top: 4px !important; width: 24px !important; height: 24px !important; }
 .listlinkicon svg { width: 100%; height: 100%; }
-.strokelink { display: block; min-width: 0; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #111; font-size: 12px; }
-.nolink { color: #777; }
-.strokepreview { display: block; width: 64px; height: 64px; border: 1px solid #ddd; box-sizing: border-box; }
+.strokelink { display: block; min-width: 0; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--fg); font-size: 12px; }
+.nolink { color: var(--soft); }
+.strokepreview { display: block; width: 64px; height: 64px; border: 1px solid var(--line); box-sizing: border-box; }
 .allstrokes .strokelist { margin-top: 0; border-top: 0; padding-top: 0; }
 @media(max-width:360px) { .strokelist li { grid-template-columns: 24px minmax(0,1fr) 52px; gap: 8px; } .listlinkicon { width: 24px; height: 24px; } .listlinkicon > span { left: 2px !important; top: 2px !important; width: 20px !important; height: 20px !important; } .strokepreview { width: 52px; height: 52px; } }
 /* Keep service base URL and editable username on the same centered line. */
@@ -672,7 +676,7 @@ input:focus {
 .minimalcanvas .profilefield input { display: block; flex: 1 1 0; width: 0; height: 60px; min-height: 60px; font-size: 14px; padding: 0; line-height: normal; }
 
 .canvasframe { position: relative; }
-.strokehover { position: absolute; z-index: 2; box-sizing: border-box; width: 220px; max-width: calc(100% - 16px); padding: 9px 10px; border: 1px solid #bbb; background: #fff; color: #111; font: 11px monospace; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; pointer-events: none; }
+.strokehover { position: absolute; z-index: 2; box-sizing: border-box; width: 220px; max-width: calc(100% - 16px); padding: 9px 10px; border: 1px solid var(--line); background: var(--bg); color: var(--fg); font: 11px monospace; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; pointer-events: none; }
 /* Hover remains an overlay. This check alone collapses after verification. */
 .minimalcanvas .botcheck { height: 85px; min-height: 85px; position: relative; }
 .minimalcanvas .botcheck > div[aria-label="Bot check"] { height: 65px; }
@@ -688,10 +692,10 @@ input:focus {
 .minimalcanvas .botcheck.collapseverified[data-verified="true"] { display: none; }
 
 /* Quiet context after the canvas and visitor gallery. */
-.minimalcanvas .whyexists { margin-top: 40px; padding-top: 24px; border-top: 1px solid #ddd; }
+.minimalcanvas .whyexists { margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--line); }
 .minimalcanvas .whyexists summary { cursor: pointer; font-size: 16px; font-weight: 400; }
 .minimalcanvas .whyexists[open] summary { margin-bottom: 16px; }
-.minimalcanvas .whyexists p { max-width: 66ch; margin: 0; font-size: 14px; line-height: 1.7; color: #555; }
+.minimalcanvas .whyexists p { max-width: 66ch; margin: 0; font-size: 14px; line-height: 1.7; color: var(--mid); }
 
 .strokehover.touchreveal { pointer-events: none; min-height: 44px; display: flex; align-items: center; }
 .strokehover.touchreveal a { pointer-events: auto; min-height: 44px; display: flex; align-items: center; color: inherit; display: block; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%; }
@@ -699,10 +703,10 @@ input:focus {
 .strokehover.touchreveal:has(a) { padding-top: 0; padding-bottom: 0; }
 
 .strokemeta { min-width: 0; display: grid; gap: 4px; }
-.stroketime { color: #777; font-size: 11px; white-space: nowrap; }
+.stroketime { color: var(--soft); font-size: 11px; white-space: nowrap; }
 .strokehover .hoverbody { display: grid; gap: 4px; min-width: 0; width: 100%; }
 .strokehover .hoverbody > span, .strokehover .hoverbody > a { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.strokehover .hoverbody > time { color: #777; }
+.strokehover .hoverbody > time { color: var(--soft); }
 .strokehover.touchreveal:has(a) { padding: 0 10px 8px; }
 .strokehover.touchreveal .hoverbody { gap: 0; }
 .strokehover.touchreveal .hoverbody > time { min-height: 0; }
@@ -714,9 +718,9 @@ input:focus {
 /* Choose an icon first, then the field opens. */
 .picker .profilechoices { display: flex; flex-wrap: wrap; gap: 12px; margin: 0 0 16px; }
 .picker .profilefield { transition: none; }
-.picker.idle .profilefield { background: #f6f6f6; border-color: #ddd; }
-.picker.idle .profileinputmark { border-right-color: #ddd; }
-.picker.idle .profilefield input { background: #f6f6f6; }
+.picker.idle .profilefield { background: var(--bg2); border-color: var(--line); }
+.picker.idle .profileinputmark { border-right-color: var(--line); }
+.picker.idle .profilefield input { background: var(--bg2); }
 .picker.chosen .profileprefix ~ input { padding: 0; min-height: 24px; height: 24px; }
 @media (max-width: 650px) { .picker.chosen .profileprefix ~ input { display: block; height: 24px; min-height: 24px; padding: 0; } }
 @media (max-width: 650px) {

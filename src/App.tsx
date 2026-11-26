@@ -157,7 +157,9 @@ function CanvasApp() {
       { id: "draft", points: active.current ? points.current : draft, url: "" },
     ].entries()) {
       if (!s.points.length) continue;
-      ctx.strokeStyle = s.id === "draft" ? "#000000" : ageShade(i, strokes.length);
+      const dark = document.documentElement.dataset.theme === "dark";
+      const shade = ageShade(i, strokes.length);
+      ctx.strokeStyle = s.id === "draft" ? (dark ? "#ffffff" : "#000000") : dark ? "#" + (255 - parseInt(shade.slice(1, 3), 16)).toString(16).padStart(2, "0").repeat(3) : shade;
       ctx.lineWidth = 2;
       ctx.beginPath();
       s.points.forEach((p, i) =>
@@ -167,6 +169,7 @@ function CanvasApp() {
     }
   }
   useEffect(draw, [a, b, draft]);
+  useEffect(() => { window.addEventListener("themechange", draw); return () => window.removeEventListener("themechange", draw); });
   useEffect(() => setUsed(pathLength(draft)), [draft]);
 
   function point(e: React.PointerEvent<HTMLCanvasElement>) {
@@ -324,6 +327,7 @@ function CanvasApp() {
       <div className="project minimalcanvas">
         <header className="pageheader">
           <h1 className="headbox logobox"><img src="/logo.png" alt="47 strokes" width="725" height="920" /></h1>
+          <button type="button" className="themetoggle" onClick={() => { const d = document.documentElement; const n = d.dataset.theme === "dark" ? "light" : "dark"; d.dataset.theme = n; try { localStorage.setItem("theme", n); } catch {} window.dispatchEvent(new Event("themechange")); }}>Light / dark</button>
         </header>
         <p className="canvasavailability" role="status">{sharedMode && loaded && !writesEnabled ? "Submissions are not open yet." : ""}</p>
         <div className="canvasframe">
