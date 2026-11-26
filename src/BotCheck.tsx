@@ -26,7 +26,7 @@ export function BotCheck({ siteKey, action, onToken, nonce, collapseOnVerified =
       try {
         clearTimeout(timeout);
         id = window.turnstile.render(root.current, {
-          sitekey: siteKey, action, theme: "light", size: "flexible",
+          sitekey: siteKey, action, theme: document.documentElement.dataset.theme === "dark" ? "dark" : "light", size: "flexible",
           callback: (token: string) => { if (!closed) { clearTimeout(timeout); onToken(token); setStatus("ready"); } },
           "expired-callback": fail,
           "error-callback": fail,
